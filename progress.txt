@@ -133,3 +133,23 @@ Task 10 COMPLETE: Build TimelineTooltip component - shows date on hover
 - pointer-events-none to avoid interfering with track interactions
 - ARIA role="tooltip" and aria-live="polite" for accessibility
 - Build verified successful
+
+Task 11 COMPLETE: Compose Timeline component from all parts
+- Created src/components/timeline/Timeline.tsx as main orchestrator component
+- Accepts TimelineConfig, optional markerCount, className, and onSelectionChange callback
+- Uses useTimelineSelection hook for all interaction state and handlers
+- Composes all child components:
+  - TimelineTooltip: positioned above track, shows date on hover
+  - TimelineTrack: main interactive track with ref forwarding
+  - TimelineSelection: rendered when selection exists
+  - TimelineHandle (x2): start/end handles shown after selection is complete
+  - TimelineMarkers: time labels below the track
+- Shows selected time range display below markers with Clear button
+- Handles visual states:
+  - isSelecting: during initial selection drag
+  - showHandles: only after selection complete (not during creation)
+  - Individual handle active/dragging states
+- Created src/components/timeline/index.ts barrel export file
+- Exports all timeline components and their TypeScript interfaces
+- Proper useEffect for onSelectionChange callback notifications
+- Build verified successful
