@@ -20,3 +20,16 @@ Task 3 COMPLETE: Configure tailwind.config.ts with cyberpunk theme
 - Added animations: pulse-neon, glow-pulse, border-glow, flicker
 - Added backgroundImage: cyber-grid, gradient-neon, gradient-neon-vertical
 - Build verified successful
+
+Task 4 COMPLETE: Set up globals.css with Google Fonts and utility classes
+- Added Google Fonts via next/font/google: Orbitron (display), JetBrains Mono (body/mono)
+- Configured fontFamily in tailwind.config.ts: sans, display, mono
+- Updated layout.tsx with font variables and cyberpunk body classes
+- Added CSS variables for neon colors and cyber backgrounds
+- Added utility classes: text-glow-cyan/magenta/purple (full and sm variants)
+- Added utility classes: border-glow-cyan/magenta/purple
+- Added utility classes: scanlines, gradient-text-neon, bg-gradient-neon-animated
+- Added utility classes: focus-ring-neon for accessibility
+- Added component classes: cyber-card, cyber-button, cyber-input
+- Updated metadata title/description for Ethereum Transaction Viewer
+- Build verified successful
