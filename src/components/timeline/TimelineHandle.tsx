@@ -79,85 +79,56 @@ export function TimelineHandle({
       aria-valuemax={100}
       tabIndex={0}
     >
-      {/* Handle background with glow */}
+      {/* Handle background */}
       <div
         className={cn(
-          'absolute inset-0 rounded-full',
+          'absolute inset-0 rounded-sm',
           // Background
-          'bg-cyber-surface',
+          'bg-white',
           // Border
-          'border-2',
-          isStart ? 'border-neon-cyan' : 'border-neon-magenta',
-          // Shadow/glow
-          isStart
-            ? 'shadow-[0_0_8px_rgba(0,255,255,0.6),inset_0_0_4px_rgba(0,255,255,0.3)]'
-            : 'shadow-[0_0_8px_rgba(255,0,255,0.6),inset_0_0_4px_rgba(255,0,255,0.3)]',
+          'border-2 border-charcoal',
           // Transition for smooth state changes
           'transition-all duration-150',
-          // Active/dragging state - intensify glow (scale handled by framer-motion)
-          (isActive || isDragging) && [
-            isStart
-              ? 'shadow-[0_0_12px_rgba(0,255,255,0.9),0_0_24px_rgba(0,255,255,0.5),inset_0_0_6px_rgba(0,255,255,0.4)]'
-              : 'shadow-[0_0_12px_rgba(255,0,255,0.9),0_0_24px_rgba(255,0,255,0.5),inset_0_0_6px_rgba(255,0,255,0.4)]',
-          ],
-          // Pulse animation when active
-          (isActive || isDragging) && 'animate-pulse-neon'
+          // Active/dragging state
+          (isActive || isDragging) && 'bg-charcoal'
         )}
       >
         {/* Grip lines */}
         <div className="absolute inset-x-1 top-1/2 -translate-y-1/2 flex flex-col gap-[3px]">
           <div
             className={cn(
-              'h-px w-full rounded-full',
-              isStart ? 'bg-neon-cyan/70' : 'bg-neon-magenta/70'
+              'h-px w-full',
+              (isActive || isDragging) ? 'bg-white/70' : 'bg-charcoal/50'
             )}
           />
           <div
             className={cn(
-              'h-px w-full rounded-full',
-              isStart ? 'bg-neon-cyan/70' : 'bg-neon-magenta/70'
+              'h-px w-full',
+              (isActive || isDragging) ? 'bg-white/70' : 'bg-charcoal/50'
             )}
           />
           <div
             className={cn(
-              'h-px w-full rounded-full',
-              isStart ? 'bg-neon-cyan/70' : 'bg-neon-magenta/70'
+              'h-px w-full',
+              (isActive || isDragging) ? 'bg-white/70' : 'bg-charcoal/50'
             )}
           />
         </div>
-
-        {/* Center dot indicator */}
-        <div
-          className={cn(
-            'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2',
-            'w-1.5 h-1.5 rounded-full',
-            isStart ? 'bg-neon-cyan' : 'bg-neon-magenta',
-            isStart
-              ? 'shadow-[0_0_4px_rgba(0,255,255,0.8)]'
-              : 'shadow-[0_0_4px_rgba(255,0,255,0.8)]',
-            // Pulse the dot when active
-            (isActive || isDragging) && 'animate-glow-pulse'
-          )}
-        />
       </div>
 
       {/* Vertical line extending from handle */}
       <div
         className={cn(
           'absolute left-1/2 -translate-x-1/2 top-full w-px h-3',
-          isStart ? 'bg-neon-cyan/50' : 'bg-neon-magenta/50',
-          (isActive || isDragging) && [
-            isStart ? 'bg-neon-cyan/80' : 'bg-neon-magenta/80',
-          ]
+          'bg-charcoal/30',
+          (isActive || isDragging) && 'bg-charcoal/60'
         )}
       />
       <div
         className={cn(
           'absolute left-1/2 -translate-x-1/2 bottom-full w-px h-3',
-          isStart ? 'bg-neon-cyan/50' : 'bg-neon-magenta/50',
-          (isActive || isDragging) && [
-            isStart ? 'bg-neon-cyan/80' : 'bg-neon-magenta/80',
-          ]
+          'bg-charcoal/30',
+          (isActive || isDragging) && 'bg-charcoal/60'
         )}
       />
     </motion.div>

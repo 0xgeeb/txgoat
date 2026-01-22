@@ -44,20 +44,18 @@ export const TimelineTrack = forwardRef<HTMLDivElement, TimelineTrackProps>(
         aria-label="Timeline selection track"
         className={cn(
           // Base layout
-          'relative h-12 w-full rounded-lg overflow-hidden',
-          // Background gradient - dark base with subtle neon undertone
-          'bg-gradient-to-r from-cyber-darker via-cyber-surface to-cyber-darker',
-          // Border with glow
-          'border border-cyber-border',
-          // Idle state: subtle pulse animation
-          !isDragging && 'animate-glow-pulse',
+          'relative h-12 w-full overflow-hidden',
+          // Background
+          'bg-cream-dark',
+          // Border
+          'border border-border',
           // Interaction states
           'cursor-crosshair select-none',
           isDragging && 'cursor-grabbing',
           // Focus styles for accessibility
-          'focus-ring-neon',
+          'focus-ring',
           // Transition for smooth state changes
-          'transition-shadow duration-200',
+          'transition-colors duration-200',
           className
         )}
         onMouseDown={onMouseDown}
@@ -69,32 +67,20 @@ export const TimelineTrack = forwardRef<HTMLDivElement, TimelineTrackProps>(
         onTouchEnd={onTouchEnd}
         onKeyDown={onKeyDown}
       >
-        {/* Inner glow border effect */}
+        {/* Track line in center */}
         <div
           className={cn(
-            'absolute inset-0 rounded-lg pointer-events-none',
-            'border border-neon-cyan/20',
-            'shadow-[inset_0_0_20px_rgba(0,255,255,0.05)]',
-            isDragging && 'border-neon-cyan/40 shadow-[inset_0_0_30px_rgba(0,255,255,0.1)]'
+            'absolute left-0 right-0 top-1/2 -translate-y-1/2 h-0.5',
+            'bg-border-dark'
           )}
         />
 
-        {/* Gradient track line in center */}
-        <div
-          className={cn(
-            'absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1',
-            'bg-gradient-to-r from-neon-cyan/30 via-neon-purple/30 to-neon-magenta/30',
-            'rounded-full'
-          )}
-        />
-
-        {/* Hover glow indicator */}
+        {/* Hover indicator */}
         {hoverPercent !== null && hoverPercent !== undefined && !isDragging && (
           <div
-            className="absolute top-0 bottom-0 w-px bg-neon-cyan/50 pointer-events-none transition-opacity duration-150"
+            className="absolute top-0 bottom-0 w-px bg-charcoal/50 pointer-events-none transition-opacity duration-150"
             style={{
               left: `${hoverPercent}%`,
-              boxShadow: '0 0 10px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.3)',
             }}
           />
         )}

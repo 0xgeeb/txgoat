@@ -70,12 +70,7 @@ export function TimelineMarkers({
           <div
             className={cn(
               'w-px h-2',
-              // First and last markers get cyan/magenta, others get purple
-              index === 0
-                ? 'bg-neon-cyan shadow-[0_0_4px_rgba(0,255,255,0.5)]'
-                : index === markers.length - 1
-                ? 'bg-neon-magenta shadow-[0_0_4px_rgba(255,0,255,0.5)]'
-                : 'bg-neon-purple/50'
+              'bg-border-dark'
             )}
           />
 
@@ -83,12 +78,9 @@ export function TimelineMarkers({
           <span
             className={cn(
               'mt-1 text-xs font-mono whitespace-nowrap',
-              // First and last labels get glow effect
-              index === 0
-                ? 'text-neon-cyan text-glow-cyan-sm'
-                : index === markers.length - 1
-                ? 'text-neon-magenta text-glow-magenta-sm'
-                : 'text-gray-400'
+              index === 0 || index === markers.length - 1
+                ? 'text-text'
+                : 'text-text-muted'
             )}
           >
             {marker.label}
@@ -100,7 +92,7 @@ export function TimelineMarkers({
       <div
         className={cn(
           'absolute top-0 left-0 right-0 h-px',
-          'bg-gradient-to-r from-neon-cyan/30 via-neon-purple/20 to-neon-magenta/30'
+          'bg-border'
         )}
       />
     </div>

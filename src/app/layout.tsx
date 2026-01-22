@@ -1,22 +1,16 @@
 import type { Metadata } from "next";
-import { Orbitron, JetBrains_Mono } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const orbitron = Orbitron({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-orbitron",
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
+  variable: "--font-inter",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Ethereum Transaction Viewer",
-  description: "Cyberpunk-themed Ethereum transaction timeline viewer",
+  title: "TxGoat",
+  description: "Ethereum Transaction Viewer",
 };
 
 export default function RootLayout({
@@ -27,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${orbitron.variable} ${jetbrainsMono.variable} font-sans antialiased bg-cyber-dark text-white`}
+        className={`${inter.variable} font-sans antialiased bg-cream text-text`}
       >
         {children}
       </body>

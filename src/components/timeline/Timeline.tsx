@@ -119,21 +119,21 @@ export function Timeline({
             'text-sm font-mono'
           )}
         >
-          <span className="text-neon-cyan text-glow-cyan-sm">
+          <span className="text-text">
             {timeRange.start.toLocaleString()}
           </span>
-          <span className="text-neon-purple">→</span>
-          <span className="text-neon-magenta text-glow-magenta-sm">
+          <span className="text-text-muted">→</span>
+          <span className="text-text">
             {timeRange.end.toLocaleString()}
           </span>
           <button
             onClick={clearSelection}
             className={cn(
-              'ml-4 px-2 py-1 rounded text-xs',
-              'bg-cyber-surface border border-cyber-border',
-              'text-gray-400 hover:text-neon-magenta hover:border-neon-magenta/50',
+              'ml-4 px-2 py-1 text-xs',
+              'bg-cream-dark border border-border',
+              'text-text-muted hover:text-text hover:border-border-dark',
               'transition-colors duration-150',
-              'focus-ring-neon'
+              'focus-ring'
             )}
             aria-label="Clear selection"
           >

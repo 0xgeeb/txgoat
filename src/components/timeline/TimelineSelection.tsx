@@ -56,86 +56,46 @@ export function TimelineSelection({
       }}
       onMouseDown={onMouseDown}
     >
-      {/* Main selection fill with animated gradient */}
+      {/* Main selection fill */}
       <div
         className={cn(
-          'absolute inset-0 rounded-sm overflow-hidden',
+          'absolute inset-0 overflow-hidden',
+          'bg-selection',
           // Transition for smooth state changes
-          'transition-all duration-150'
+          'transition-all duration-150',
+          isSelecting && 'bg-border'
         )}
-      >
-        {/* Animated gradient background */}
-        <div
-          className={cn(
-            'absolute inset-0',
-            // Base gradient
-            'bg-gradient-to-r from-neon-cyan/30 via-neon-purple/40 to-neon-magenta/30',
-            // Selecting state: intensifying glow
-            isSelecting && 'from-neon-cyan/40 via-neon-purple/50 to-neon-magenta/40',
-            // Animation for the gradient
-            !isSelecting && 'bg-gradient-neon-animated'
-          )}
-          style={{
-            backgroundSize: '200% 100%',
-            animation: isSelecting ? 'none' : 'gradient-shift 3s ease infinite',
-          }}
-        />
+      />
 
-        {/* Inner glow effect */}
-        <div
-          className={cn(
-            'absolute inset-0',
-            'shadow-[inset_0_0_15px_rgba(0,255,255,0.3),inset_0_0_30px_rgba(191,0,255,0.2)]',
-            isSelecting && 'shadow-[inset_0_0_20px_rgba(0,255,255,0.4),inset_0_0_40px_rgba(191,0,255,0.3)]'
-          )}
-        />
-
-        {/* Scanline effect for cyberpunk aesthetic */}
-        <div
-          className={cn(
-            'absolute inset-0 pointer-events-none opacity-20',
-            'bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(0,0,0,0.3)_2px,rgba(0,0,0,0.3)_4px)]'
-          )}
-        />
-      </div>
-
-      {/* Left edge glow */}
+      {/* Left edge */}
       <div
         className={cn(
           'absolute left-0 top-0 bottom-0 w-px',
-          'bg-neon-cyan',
-          'shadow-[0_0_8px_rgba(0,255,255,0.8),0_0_16px_rgba(0,255,255,0.4)]',
-          isSelecting && 'shadow-[0_0_12px_rgba(0,255,255,1),0_0_24px_rgba(0,255,255,0.6)]'
+          'bg-charcoal'
         )}
       />
 
-      {/* Right edge glow */}
+      {/* Right edge */}
       <div
         className={cn(
           'absolute right-0 top-0 bottom-0 w-px',
-          'bg-neon-magenta',
-          'shadow-[0_0_8px_rgba(255,0,255,0.8),0_0_16px_rgba(255,0,255,0.4)]',
-          isSelecting && 'shadow-[0_0_12px_rgba(255,0,255,1),0_0_24px_rgba(255,0,255,0.6)]'
+          'bg-charcoal'
         )}
       />
 
-      {/* Top edge highlight */}
+      {/* Top edge */}
       <div
         className={cn(
           'absolute top-0 left-0 right-0 h-px',
-          'bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-magenta',
-          'opacity-60',
-          isSelecting && 'opacity-80'
+          'bg-charcoal'
         )}
       />
 
-      {/* Bottom edge highlight */}
+      {/* Bottom edge */}
       <div
         className={cn(
           'absolute bottom-0 left-0 right-0 h-px',
-          'bg-gradient-to-r from-neon-cyan via-neon-purple to-neon-magenta',
-          'opacity-60',
-          isSelecting && 'opacity-80'
+          'bg-charcoal'
         )}
       />
     </motion.div>

@@ -3,15 +3,17 @@
 @tailwind utilities;
 
 :root {
-  --background: #0a0a0f;
-  --foreground: #ededed;
-  --neon-cyan: #00ffff;
-  --neon-magenta: #ff00ff;
-  --neon-purple: #a855f7;
-  --cyber-dark: #0a0a0f;
-  --cyber-darker: #050508;
-  --cyber-surface: #12121a;
-  --cyber-border: #1a1a2e;
+  --background: #FAF7F2;
+  --foreground: #1a1a1a;
+  --cream: #FAF7F2;
+  --cream-dark: #F0EDE6;
+  --border: #E0DDD6;
+  --border-dark: #C4C0B8;
+  --text: #1a1a1a;
+  --text-muted: #666666;
+  --charcoal: #333333;
+  --charcoal-light: #555555;
+  --selection: #E8E4DC;
 }
 
 body {
@@ -20,9 +22,8 @@ body {
 }
 
 @layer base {
-  /* Default to dark cyberpunk theme */
   html {
-    color-scheme: dark;
+    color-scheme: light;
   }
 }
 
@@ -31,176 +32,58 @@ body {
     text-wrap: balance;
   }
 
-  /* Neon text glow effects */
-  .text-glow-cyan {
-    text-shadow:
-      0 0 5px var(--neon-cyan),
-      0 0 10px var(--neon-cyan),
-      0 0 20px var(--neon-cyan);
-  }
-
-  .text-glow-magenta {
-    text-shadow:
-      0 0 5px var(--neon-magenta),
-      0 0 10px var(--neon-magenta),
-      0 0 20px var(--neon-magenta);
-  }
-
-  .text-glow-purple {
-    text-shadow:
-      0 0 5px var(--neon-purple),
-      0 0 10px var(--neon-purple),
-      0 0 20px var(--neon-purple);
-  }
-
-  /* Subtle neon text glow */
-  .text-glow-cyan-sm {
-    text-shadow: 0 0 5px var(--neon-cyan);
-  }
-
-  .text-glow-magenta-sm {
-    text-shadow: 0 0 5px var(--neon-magenta);
-  }
-
-  .text-glow-purple-sm {
-    text-shadow: 0 0 5px var(--neon-purple);
-  }
-
-  /* Neon border glow effects */
-  .border-glow-cyan {
-    box-shadow:
-      0 0 5px var(--neon-cyan),
-      0 0 10px var(--neon-cyan),
-      inset 0 0 5px rgba(0, 255, 255, 0.1);
-  }
-
-  .border-glow-magenta {
-    box-shadow:
-      0 0 5px var(--neon-magenta),
-      0 0 10px var(--neon-magenta),
-      inset 0 0 5px rgba(255, 0, 255, 0.1);
-  }
-
-  .border-glow-purple {
-    box-shadow:
-      0 0 5px var(--neon-purple),
-      0 0 10px var(--neon-purple),
-      inset 0 0 5px rgba(168, 85, 247, 0.1);
-  }
-
-  /* Cyberpunk scanline overlay */
-  .scanlines {
-    position: relative;
-  }
-
-  .scanlines::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 0, 0, 0.1) 2px,
-      rgba(0, 0, 0, 0.1) 4px
-    );
-    pointer-events: none;
-  }
-
-  /* Gradient text for headings */
-  .gradient-text-neon {
-    background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta), var(--neon-purple));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  /* Animated gradient background */
-  .bg-gradient-neon-animated {
-    background: linear-gradient(
-      90deg,
-      var(--neon-cyan),
-      var(--neon-magenta),
-      var(--neon-purple),
-      var(--neon-cyan)
-    );
-    background-size: 300% 100%;
-    animation: gradient-shift 8s ease infinite;
-  }
-
-  @keyframes gradient-shift {
-    0%, 100% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-  }
-
-  /* Focus ring for accessibility with neon style */
-  .focus-ring-neon:focus {
+  /* Focus ring for accessibility */
+  .focus-ring:focus {
     outline: none;
-    box-shadow:
-      0 0 0 2px var(--cyber-dark),
-      0 0 0 4px var(--neon-cyan),
-      0 0 10px var(--neon-cyan);
+    box-shadow: 0 0 0 2px var(--cream), 0 0 0 4px var(--charcoal);
   }
 
-  .focus-ring-neon:focus:not(:focus-visible) {
+  .focus-ring:focus:not(:focus-visible) {
     box-shadow: none;
   }
 
-  .focus-ring-neon:focus-visible {
+  .focus-ring:focus-visible {
     outline: none;
-    box-shadow:
-      0 0 0 2px var(--cyber-dark),
-      0 0 0 4px var(--neon-cyan),
-      0 0 10px var(--neon-cyan);
+    box-shadow: 0 0 0 2px var(--cream), 0 0 0 4px var(--charcoal);
   }
 }
 
 @layer components {
-  /* Cyberpunk card style */
-  .cyber-card {
-    background: var(--cyber-surface);
-    border: 1px solid var(--cyber-border);
-    border-radius: 0.5rem;
+  /* Minimal card style */
+  .card {
+    background: white;
+    border: 1px solid var(--border);
   }
 
-  /* Neon button base */
-  .cyber-button {
-    background: transparent;
-    border: 1px solid var(--neon-cyan);
-    color: var(--neon-cyan);
+  /* Minimal button */
+  .btn {
+    background: var(--charcoal);
+    border: 1px solid var(--charcoal);
+    color: white;
     padding: 0.5rem 1rem;
-    border-radius: 0.25rem;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
   }
 
-  .cyber-button:hover {
-    background: rgba(0, 255, 255, 0.1);
-    box-shadow:
-      0 0 10px var(--neon-cyan),
-      inset 0 0 10px rgba(0, 255, 255, 0.1);
+  .btn:hover {
+    background: var(--charcoal-light);
+    border-color: var(--charcoal-light);
   }
 
-  /* Neon input field */
-  .cyber-input {
-    background: var(--cyber-darker);
-    border: 1px solid var(--cyber-border);
-    color: var(--foreground);
+  /* Minimal input field */
+  .input {
+    background: white;
+    border: 1px solid var(--border);
+    color: var(--text);
     padding: 0.75rem 1rem;
-    border-radius: 0.25rem;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
   }
 
-  .cyber-input:focus {
+  .input:focus {
     outline: none;
-    border-color: var(--neon-cyan);
-    box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+    border-color: var(--charcoal);
   }
 
-  .cyber-input::placeholder {
-    color: rgba(255, 255, 255, 0.3);
+  .input::placeholder {
+    color: var(--text-muted);
   }
 }

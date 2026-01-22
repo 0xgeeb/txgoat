@@ -1,12 +1,12 @@
 # Ethereum Transaction Viewer - Product Requirements Document
 
 ## Overview
-Build a cyberpunk-themed web app with a horizontal timeline where users can click-and-drag to select a time period for viewing Ethereum transactions.
+Build a modern minimal web app with a horizontal timeline where users can click-and-drag to select a time period for viewing Ethereum transactions.
 
 ## Tech Stack
 - **Framework:** Next.js 14 (App Router)
-- **Styling:** Tailwind CSS with custom cyberpunk theme
-- **Visual Style:** Dark/cyberpunk (dark backgrounds, neon cyan/magenta/purple accents, glow effects)
+- **Styling:** Tailwind CSS with cream/minimal theme
+- **Visual Style:** Cream background (#FAF7F2), charcoal accents (#333333), sharp borders, no glow effects
 - **Additional Libraries:** clsx, tailwind-merge, framer-motion, date-fns
 
 ## Project Structure
@@ -15,7 +15,7 @@ src/
 ├── app/
 │   ├── layout.tsx          # Root layout with fonts
 │   ├── page.tsx            # Main page with timeline
-│   └── globals.css         # Global styles + neon utilities
+│   └── globals.css         # Global styles + minimal utilities
 ├── components/
 │   ├── timeline/
 │   │   ├── Timeline.tsx        # Main container
@@ -25,8 +25,8 @@ src/
 │   │   ├── TimelineMarkers.tsx # Time tick marks/labels
 │   │   └── TimelineTooltip.tsx # Hover date tooltip
 │   └── ui/
-│       ├── GlowContainer.tsx   # Neon glow wrapper
-│       └── GridBackground.tsx  # Circuit grid pattern
+│       ├── Container.tsx       # Bordered container wrapper
+│       └── Background.tsx      # Clean background
 ├── hooks/
 │   └── useTimelineSelection.ts # Core drag/selection logic
 ├── lib/
@@ -55,13 +55,13 @@ src/
   {
     "id": 3,
     "phase": "Project Setup",
-    "task": "Configure tailwind.config.ts with cyberpunk theme (neon colors, dark backgrounds, glow box-shadows, custom animations)",
+    "task": "Configure tailwind.config.ts with minimal theme (cream background, charcoal accents, sharp borders)",
     "passes": false
   },
   {
     "id": 4,
     "phase": "Project Setup",
-    "task": "Set up globals.css with Google Fonts (Orbitron, JetBrains Mono) and utility classes",
+    "task": "Set up globals.css with Google Fonts (Inter) and utility classes",
     "passes": false
   },
   {
@@ -73,19 +73,19 @@ src/
   {
     "id": 6,
     "phase": "Timeline Components",
-    "task": "Build TimelineTrack component - horizontal bar with gradient background and glow border",
+    "task": "Build TimelineTrack component - horizontal bar with sharp border",
     "passes": false
   },
   {
     "id": 7,
     "phase": "Timeline Components",
-    "task": "Build TimelineSelection component - positioned overlay with animated gradient fill",
+    "task": "Build TimelineSelection component - positioned overlay with solid fill",
     "passes": false
   },
   {
     "id": 8,
     "phase": "Timeline Components",
-    "task": "Build TimelineHandle component - draggable grips with pulse animation on active",
+    "task": "Build TimelineHandle component - draggable grips with smooth animation",
     "passes": false
   },
   {
@@ -120,18 +120,12 @@ src/
   },
   {
     "id": 14,
-    "phase": "Polish",
-    "task": "Add responsive design for mobile (larger touch targets)",
+    "phase": "Redesign",
+    "task": "Redesign app with cream background, modern minimal style, sharp borders, and txgoat logo",
     "passes": false
   },
   {
     "id": 15,
-    "phase": "Polish",
-    "task": "Implement keyboard accessibility (arrow keys for selection)",
-    "passes": false
-  },
-  {
-    "id": 16,
     "phase": "Polish",
     "task": "Test and refine animations",
     "passes": false
@@ -150,22 +144,22 @@ src/
 ### Visual States
 | State | Appearance |
 |-------|------------|
-| Idle | Dim track with subtle pulse |
-| Hover | Glow follows cursor |
-| Selecting | Growing highlight with intensifying glow |
+| Idle | Track with subtle border |
+| Hover | Cursor indicator visible |
+| Selecting | Growing highlight with solid fill |
 | Selected | Full highlight + visible handles |
-| Adjusting | Active handle pulses and scales up |
+| Adjusting | Active handle darkens and scales up |
 
 ## Critical Files
-1. `tailwind.config.ts` - Cyberpunk theme foundation
+1. `tailwind.config.ts` - Minimal theme foundation
 2. `src/hooks/useTimelineSelection.ts` - Core interaction logic
 3. `src/components/timeline/Timeline.tsx` - Main orchestrator
-4. `src/app/globals.css` - Neon effects and base styles
+4. `src/app/globals.css` - Base styles
 5. `src/components/timeline/TimelineHandle.tsx` - Drag interaction
 
 ## Verification
-- Run `npm run dev` and verify the app loads
+- Run `npm run dev` and verify the app loads with cream background
+- Confirm logo displays in header
 - Test timeline click-and-drag selection works smoothly
 - Verify handles can adjust selection after initial creation
-- Check responsive behavior on mobile viewport
-- Confirm neon glow effects render correctly
+- Confirm minimal style with no glow effects

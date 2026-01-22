@@ -83,27 +83,18 @@ export function TimelineTooltip({
           {/* Tooltip container */}
           <div
             className={cn(
-              'relative px-3 py-2 rounded-md',
-              'bg-cyber-surface/95 backdrop-blur-sm',
-              'border border-neon-cyan/50',
-              'shadow-[0_0_10px_rgba(0,255,255,0.3),inset_0_1px_0_rgba(0,255,255,0.1)]'
+              'relative px-3 py-2',
+              'bg-white',
+              'border border-border'
             )}
           >
-            {/* Inner glow effect */}
-            <div
-              className={cn(
-                'absolute inset-0 rounded-md',
-                'bg-gradient-to-b from-neon-cyan/10 to-transparent'
-              )}
-            />
-
             {/* Content */}
             <div className="relative flex flex-col items-center gap-0.5">
               {/* Date */}
               <span
                 className={cn(
                   'text-sm font-mono font-medium whitespace-nowrap',
-                  'text-neon-cyan text-glow-cyan-sm'
+                  'text-text'
                 )}
               >
                 {tooltipContent.dateLabel}
@@ -114,7 +105,7 @@ export function TimelineTooltip({
                 <span
                   className={cn(
                     'text-xs font-mono whitespace-nowrap',
-                    'text-neon-purple/80'
+                    'text-text-muted'
                   )}
                 >
                   {tooltipContent.timeLabel}
@@ -129,7 +120,7 @@ export function TimelineTooltip({
                 'w-0 h-0',
                 'border-l-[6px] border-l-transparent',
                 'border-r-[6px] border-r-transparent',
-                'border-t-[6px] border-t-neon-cyan/50'
+                'border-t-[6px] border-t-border'
               )}
             />
             {/* Arrow inner (for depth effect) */}
@@ -139,7 +130,7 @@ export function TimelineTooltip({
                 'w-0 h-0',
                 'border-l-[5px] border-l-transparent',
                 'border-r-[5px] border-r-transparent',
-                'border-t-[5px] border-t-cyber-surface/95'
+                'border-t-[5px] border-t-white'
               )}
             />
           </div>
