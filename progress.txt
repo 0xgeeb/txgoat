@@ -60,3 +60,16 @@ Task 6 COMPLETE: Build TimelineTrack component - horizontal bar with gradient ba
 - Added focus-ring-neon for visible focus states
 - Accepts children slot for selection overlay, handles, and other timeline elements
 - Build verified successful
+
+Task 7 COMPLETE: Build TimelineSelection component - positioned overlay with animated gradient fill
+- Created src/components/timeline/TimelineSelection.tsx
+- Takes SelectionPosition (startPercent, endPercent) to calculate left position and width
+- Implemented animated gradient background (cyan → purple → magenta) with gradient-shift animation
+- Added inner glow effect with inset box-shadows
+- Added scanline overlay for cyberpunk aesthetic
+- Added left edge glow (neon-cyan) and right edge glow (neon-magenta)
+- Added top/bottom edge highlights with gradient
+- Implemented visual states: isSelecting (intensified glow) and isDragging (cursor change)
+- Supports onMouseDown for selection drag initiation
+- Minimum width threshold (0.1%) to avoid rendering tiny selections
+- Build verified successful
