@@ -91,3 +91,24 @@ Task 8 COMPLETE: Build TimelineHandle component - draggable grips with pulse ani
 - ARIA accessibility: role="slider", aria-label, aria-valuenow, tabIndex
 - cursor-ew-resize for visual drag affordance
 - Build verified successful
+
+Task 9 COMPLETE: Build TimelineMarkers component - time labels below track
+- Created src/components/timeline/TimelineMarkers.tsx
+- Accepts TimelineConfig to calculate date range
+- Configurable markerCount prop (default 5 markers)
+- Smart date formatting based on time span:
+  - Less than 1 day: shows time (HH:mm)
+  - Less than 1 week: shows day and time (EEE HH:mm)
+  - Less than 3 months: shows month and day (MMM d)
+  - Longer spans: shows month and year (MMM yyyy)
+- Tick marks with neon styling:
+  - First marker: neon-cyan with glow
+  - Last marker: neon-magenta with glow
+  - Middle markers: neon-purple (subtle)
+- Time labels with cyberpunk styling:
+  - First/last labels have glow effects
+  - Uses mono font (JetBrains Mono)
+- Connecting gradient line under markers (cyan → purple → magenta)
+- Positioned absolutely with percentage-based left positioning
+- aria-hidden="true" since decorative
+- Build verified successful
