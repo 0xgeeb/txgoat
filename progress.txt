@@ -33,3 +33,16 @@ Task 4 COMPLETE: Set up globals.css with Google Fonts and utility classes
 - Added component classes: cyber-card, cyber-button, cyber-input
 - Updated metadata title/description for Ethereum Transaction Viewer
 - Build verified successful
+
+Task 5 COMPLETE: Create useTimelineSelection hook with mouse/touch event handlers, selection state, position calculation, and handle drag logic
+- Created src/types/timeline.ts with TypeScript interfaces (TimeRange, SelectionPosition, TimelineConfig, DragTarget, TimelineState, TimelineHandlers, UseTimelineSelectionReturn)
+- Created src/lib/utils.ts with cn() classname helper (clsx + tailwind-merge)
+- Created src/lib/timeUtils.ts with date/position calculations (percentToDate, dateToPercent, selectionToTimeRange, timeRangeToSelection, clampPercent, getPositionPercent, normalizeSelection, isValidSelection)
+- Created src/hooks/useTimelineSelection.ts with:
+  - Mouse event handlers (mousedown, mousemove, mouseup, mouseleave)
+  - Touch event handlers (touchstart, touchmove, touchend)
+  - Selection state management (selection, timeRange, isDragging, dragTarget, hoverPercent)
+  - Handle drag logic (start handle, end handle, selection drag)
+  - Keyboard accessibility (arrow keys to move/resize selection, Escape to clear)
+  - Global event listeners for drag outside track bounds
+- Build verified successful
