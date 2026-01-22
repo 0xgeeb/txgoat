@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { TimelineConfig } from '@/types/timeline';
@@ -49,88 +50,102 @@ export function TimelineTooltip({
     return { dateLabel, timeLabel };
   }, [hoverPercent, config]);
 
-  if (hoverPercent === null || !tooltipContent) {
-    return null;
-  }
-
   return (
-    <div
-      className={cn(
-        'absolute bottom-full mb-3 pointer-events-none z-20',
-        'transform -translate-x-1/2',
-        className
-      )}
-      style={{
-        left: `${hoverPercent}%`,
-      }}
-      role="tooltip"
-      aria-live="polite"
-    >
-      {/* Tooltip container */}
-      <div
-        className={cn(
-          'relative px-3 py-2 rounded-md',
-          'bg-cyber-surface/95 backdrop-blur-sm',
-          'border border-neon-cyan/50',
-          'shadow-[0_0_10px_rgba(0,255,255,0.3),inset_0_1px_0_rgba(0,255,255,0.1)]',
-          'animate-in fade-in-0 zoom-in-95 duration-150'
-        )}
-      >
-        {/* Inner glow effect */}
-        <div
+    <AnimatePresence>
+      {hoverPercent !== null && tooltipContent && (
+        <motion.div
           className={cn(
-            'absolute inset-0 rounded-md',
-            'bg-gradient-to-b from-neon-cyan/10 to-transparent'
+            'absolute bottom-full mb-3 pointer-events-none z-20',
+            'transform -translate-x-1/2',
+            className
           )}
-        />
-
-        {/* Content */}
-        <div className="relative flex flex-col items-center gap-0.5">
-          {/* Date */}
-          <span
+          style={{
+            left: `${hoverPercent}%`,
+          }}
+          // Framer-motion animations for smooth position and entrance/exit
+          initial={{ opacity: 0, scale: 0.95, y: 4 }}
+          animate={{
+            opacity: 1,
+            scale: 1,
+            y: 0,
+            left: `${hoverPercent}%`,
+          }}
+          exit={{ opacity: 0, scale: 0.95, y: 4 }}
+          transition={{
+            opacity: { duration: 0.15 },
+            scale: { type: 'spring', stiffness: 400, damping: 25 },
+            y: { type: 'spring', stiffness: 400, damping: 25 },
+            left: { type: 'spring', stiffness: 300, damping: 30, mass: 0.5 },
+          }}
+          role="tooltip"
+          aria-live="polite"
+        >
+          {/* Tooltip container */}
+          <div
             className={cn(
-              'text-sm font-mono font-medium whitespace-nowrap',
-              'text-neon-cyan text-glow-cyan-sm'
+              'relative px-3 py-2 rounded-md',
+              'bg-cyber-surface/95 backdrop-blur-sm',
+              'border border-neon-cyan/50',
+              'shadow-[0_0_10px_rgba(0,255,255,0.3),inset_0_1px_0_rgba(0,255,255,0.1)]'
             )}
           >
-            {tooltipContent.dateLabel}
-          </span>
-
-          {/* Time (if available) */}
-          {tooltipContent.timeLabel && (
-            <span
+            {/* Inner glow effect */}
+            <div
               className={cn(
-                'text-xs font-mono whitespace-nowrap',
-                'text-neon-purple/80'
+                'absolute inset-0 rounded-md',
+                'bg-gradient-to-b from-neon-cyan/10 to-transparent'
               )}
-            >
-              {tooltipContent.timeLabel}
-            </span>
-          )}
-        </div>
+            />
 
-        {/* Arrow pointing down */}
-        <div
-          className={cn(
-            'absolute left-1/2 -translate-x-1/2 -bottom-1.5',
-            'w-0 h-0',
-            'border-l-[6px] border-l-transparent',
-            'border-r-[6px] border-r-transparent',
-            'border-t-[6px] border-t-neon-cyan/50'
-          )}
-        />
-        {/* Arrow inner (for depth effect) */}
-        <div
-          className={cn(
-            'absolute left-1/2 -translate-x-1/2 -bottom-1',
-            'w-0 h-0',
-            'border-l-[5px] border-l-transparent',
-            'border-r-[5px] border-r-transparent',
-            'border-t-[5px] border-t-cyber-surface/95'
-          )}
-        />
-      </div>
-    </div>
+            {/* Content */}
+            <div className="relative flex flex-col items-center gap-0.5">
+              {/* Date */}
+              <span
+                className={cn(
+                  'text-sm font-mono font-medium whitespace-nowrap',
+                  'text-neon-cyan text-glow-cyan-sm'
+                )}
+              >
+                {tooltipContent.dateLabel}
+              </span>
+
+              {/* Time (if available) */}
+              {tooltipContent.timeLabel && (
+                <span
+                  className={cn(
+                    'text-xs font-mono whitespace-nowrap',
+                    'text-neon-purple/80'
+                  )}
+                >
+                  {tooltipContent.timeLabel}
+                </span>
+              )}
+            </div>
+
+            {/* Arrow pointing down */}
+            <div
+              className={cn(
+                'absolute left-1/2 -translate-x-1/2 -bottom-1.5',
+                'w-0 h-0',
+                'border-l-[6px] border-l-transparent',
+                'border-r-[6px] border-r-transparent',
+                'border-t-[6px] border-t-neon-cyan/50'
+              )}
+            />
+            {/* Arrow inner (for depth effect) */}
+            <div
+              className={cn(
+                'absolute left-1/2 -translate-x-1/2 -bottom-1',
+                'w-0 h-0',
+                'border-l-[5px] border-l-transparent',
+                'border-r-[5px] border-r-transparent',
+                'border-t-[5px] border-t-cyber-surface/95'
+              )}
+            />
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
 

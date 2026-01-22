@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import type { SelectionPosition } from '@/types/timeline';
 
@@ -28,7 +29,7 @@ export function TimelineSelection({
   }
 
   return (
-    <div
+    <motion.div
       className={cn(
         // Positioning
         'absolute top-0 bottom-0 pointer-events-auto',
@@ -40,6 +41,18 @@ export function TimelineSelection({
       style={{
         left: `${left}%`,
         width: `${width}%`,
+      }}
+      // Framer-motion animations for smooth position/size changes
+      animate={{
+        left: `${left}%`,
+        width: `${width}%`,
+      }}
+      initial={false}
+      transition={{
+        type: 'spring',
+        stiffness: 300,
+        damping: 30,
+        mass: 0.5,
       }}
       onMouseDown={onMouseDown}
     >
@@ -125,7 +138,7 @@ export function TimelineSelection({
           isSelecting && 'opacity-80'
         )}
       />
-    </div>
+    </motion.div>
   );
 }
 

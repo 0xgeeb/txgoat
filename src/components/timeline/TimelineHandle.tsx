@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 export type HandlePosition = 'start' | 'end';
@@ -35,7 +36,7 @@ export function TimelineHandle({
   };
 
   return (
-    <div
+    <motion.div
       className={cn(
         // Positioning - centered on the edge
         'absolute top-1/2 -translate-y-1/2 z-10',
@@ -48,7 +49,26 @@ export function TimelineHandle({
         className
       )}
       style={{
-        left: isStart ? `calc(${percent}% - 8px)` : `calc(${percent}% - 8px)`,
+        left: `calc(${percent}% - 8px)`,
+      }}
+      // Framer-motion animations for smooth position changes
+      animate={{
+        left: `calc(${percent}% - 8px)`,
+        scale: isActive || isDragging ? 1.1 : 1,
+      }}
+      initial={false}
+      transition={{
+        left: {
+          type: 'spring',
+          stiffness: 300,
+          damping: 30,
+          mass: 0.5,
+        },
+        scale: {
+          type: 'spring',
+          stiffness: 400,
+          damping: 25,
+        },
       }}
       onMouseDown={handleMouseDown}
       onTouchStart={handleTouchStart}
@@ -74,9 +94,8 @@ export function TimelineHandle({
             : 'shadow-[0_0_8px_rgba(255,0,255,0.6),inset_0_0_4px_rgba(255,0,255,0.3)]',
           // Transition for smooth state changes
           'transition-all duration-150',
-          // Active/dragging state - scale up and intensify glow
+          // Active/dragging state - intensify glow (scale handled by framer-motion)
           (isActive || isDragging) && [
-            'scale-110',
             isStart
               ? 'shadow-[0_0_12px_rgba(0,255,255,0.9),0_0_24px_rgba(0,255,255,0.5),inset_0_0_6px_rgba(0,255,255,0.4)]'
               : 'shadow-[0_0_12px_rgba(255,0,255,0.9),0_0_24px_rgba(255,0,255,0.5),inset_0_0_6px_rgba(255,0,255,0.4)]',
@@ -141,7 +160,7 @@ export function TimelineHandle({
           ]
         )}
       />
-    </div>
+    </motion.div>
   );
 }
 

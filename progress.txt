@@ -153,3 +153,21 @@ Task 11 COMPLETE: Compose Timeline component from all parts
 - Exports all timeline components and their TypeScript interfaces
 - Proper useEffect for onSelectionChange callback notifications
 - Build verified successful
+
+Task 12 COMPLETE: Add framer-motion animations for smooth handle dragging
+- Updated TimelineHandle component with framer-motion:
+  - Converted to motion.div for animated position changes
+  - Added spring animation for smooth left position transitions (stiffness: 300, damping: 30)
+  - Added spring animation for scale changes on active/dragging states
+  - Removed CSS scale-110 in favor of framer-motion controlled scaling
+- Updated TimelineSelection component with framer-motion:
+  - Converted to motion.div for animated position/size changes
+  - Added spring animation for smooth left and width transitions
+  - Selection now smoothly animates when handles are dragged
+- Updated TimelineTooltip component with framer-motion:
+  - Wrapped in AnimatePresence for enter/exit animations
+  - Added smooth entrance (fade in + scale up + y slide)
+  - Added smooth exit animation (fade out + scale down)
+  - Added spring animation for horizontal position following cursor
+- All animations use spring physics for natural, responsive feel
+- Build verified successful
