@@ -46,3 +46,17 @@ Task 5 COMPLETE: Create useTimelineSelection hook with mouse/touch event handler
   - Keyboard accessibility (arrow keys to move/resize selection, Escape to clear)
   - Global event listeners for drag outside track bounds
 - Build verified successful
+
+Task 6 COMPLETE: Build TimelineTrack component - horizontal bar with gradient background and glow border
+- Created src/components/timeline/TimelineTrack.tsx
+- Implemented forwardRef component with TypeScript props interface
+- Added gradient background: dark cyber gradient (from-cyber-darker via-cyber-surface to-cyber-darker)
+- Added inner glow border effect with neon-cyan accents
+- Added centered gradient track line (cyan → purple → magenta)
+- Added hover glow indicator that follows cursor position
+- Implemented idle state with subtle glow-pulse animation
+- Added dragging state visual feedback (cursor change, intensified glow)
+- Added keyboard accessibility support (tabIndex, role="group", aria-label)
+- Added focus-ring-neon for visible focus states
+- Accepts children slot for selection overlay, handles, and other timeline elements
+- Build verified successful
