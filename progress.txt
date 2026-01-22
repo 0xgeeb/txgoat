@@ -73,3 +73,21 @@ Task 7 COMPLETE: Build TimelineSelection component - positioned overlay with ani
 - Supports onMouseDown for selection drag initiation
 - Minimum width threshold (0.1%) to avoid rendering tiny selections
 - Build verified successful
+
+Task 8 COMPLETE: Build TimelineHandle component - draggable grips with pulse animation on active
+- Created src/components/timeline/TimelineHandle.tsx
+- Takes position ('start' | 'end'), percent, isActive, isDragging, and onDragStart props
+- Positioned absolutely based on percent, centered vertically on track
+- Color-coded: cyan for start handle, magenta for end handle
+- Styled with cyber-surface background and neon border with glow
+- Added grip lines (3 horizontal lines) inside the handle for visual affordance
+- Added center dot indicator with glow effect
+- Added vertical line extensions above/below handle for visual connection
+- Implemented pulse animation (animate-pulse-neon) when active/dragging
+- Scale up effect (scale-110) when active/dragging
+- Intensified glow shadows when active/dragging
+- Larger invisible touch target (before pseudo-element with -8px inset)
+- Mouse and touch event handlers for drag initiation with stopPropagation
+- ARIA accessibility: role="slider", aria-label, aria-valuenow, tabIndex
+- cursor-ew-resize for visual drag affordance
+- Build verified successful
