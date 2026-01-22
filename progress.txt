@@ -171,3 +171,28 @@ Task 12 COMPLETE: Add framer-motion animations for smooth handle dragging
   - Added spring animation for horizontal position following cursor
 - All animations use spring physics for natural, responsive feel
 - Build verified successful
+
+Task 13 COMPLETE: Build main page with header, Ethereum address input, timeline component, and grid background
+- Created src/components/ui/GridBackground.tsx:
+  - Circuit grid pattern with cyan and purple grid lines at different scales
+  - Corner accent radial gradients (cyan top-left, magenta bottom-right)
+  - Subtle horizontal scanline effect overlay
+  - Wraps children in relative z-10 content layer
+- Created src/components/ui/GlowContainer.tsx:
+  - Neon glow wrapper component with color variants (cyan, magenta, purple)
+  - Intensity levels (subtle, normal, intense) for different shadow strengths
+  - Optional animated prop for glow-pulse animation
+  - Inner gradient overlay for depth effect
+  - Hover state with enhanced glow
+- Created src/components/ui/index.ts barrel export file
+- Updated src/app/page.tsx with:
+  - Header: Gradient text title "Ethereum Transaction Viewer" with subtitle
+  - Ethereum address input: Labeled input field with validation and Load button
+  - Address validation feedback for invalid addresses
+  - Timeline section wrapped in GlowContainer with purple accent
+  - Selected range info display with cyan/magenta date formatting
+  - Footer with subtle branding
+  - GridBackground wrapping entire page
+  - Default timeline config: last 30 days with 1 hour minimum selection
+  - Uses date-fns subDays for date calculation
+- Build verified successful
