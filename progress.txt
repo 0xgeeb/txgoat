@@ -112,3 +112,24 @@ Task 9 COMPLETE: Build TimelineMarkers component - time labels below track
 - Positioned absolutely with percentage-based left positioning
 - aria-hidden="true" since decorative
 - Build verified successful
+
+Task 10 COMPLETE: Build TimelineTooltip component - shows date on hover
+- Created src/components/timeline/TimelineTooltip.tsx
+- Accepts hoverPercent (number | null) and config (TimelineConfig) props
+- Positioned absolutely above the track, centered on hover position
+- Smart date formatting based on time span:
+  - Less than 1 day: shows full date + time with seconds (MMM d, yyyy / HH:mm:ss)
+  - Less than 1 week: shows weekday, date + time (EEE, MMM d / HH:mm)
+  - Less than 3 months: shows full date + time (MMM d, yyyy / HH:mm)
+  - Longer spans: shows date only (MMM d, yyyy)
+- Cyberpunk styling:
+  - cyber-surface background with backdrop blur
+  - neon-cyan border with glow shadow
+  - Inner gradient glow effect
+  - Date label in neon-cyan with glow
+  - Time label in neon-purple (when applicable)
+- Arrow pointer at bottom pointing to hover position
+- Smooth entrance animation (fade-in + zoom-in)
+- pointer-events-none to avoid interfering with track interactions
+- ARIA role="tooltip" and aria-live="polite" for accessibility
+- Build verified successful
