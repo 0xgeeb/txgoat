@@ -4,10 +4,13 @@ import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { Timeline3DWrapper, type TimeRange } from '@/components/timeline3d/Timeline3DWrapper';
 import logo from '@/assets/txgoatlogo.png';
+import { useChainData } from "../hooks/useChainData"
 
 export default function Home() {
   const [address, setAddress] = useState('');
   const [selectedRange, setSelectedRange] = useState<TimeRange | null>(null);
+
+  const { getBlock } = useChainData()
 
   // Default timeline config: 2014 to present (Ethereum launch era to now)
   const config = useMemo(() => ({
@@ -21,6 +24,11 @@ export default function Home() {
   };
 
   const isValidAddress = address.length === 42 && address.startsWith('0x');
+
+  const test = () => {
+    console.log(selectedRange)
+    getBlock(selectedRange)
+  }
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -117,7 +125,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-6 px-6 border-t border-border">
         <div className="max-w-4xl mx-auto text-center">
-          <p className="text-xs text-text-muted">
+          <p className="text-xs text-text-muted" onClick={() => test()}>
             TxGoat
           </p>
         </div>
