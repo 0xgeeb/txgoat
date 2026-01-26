@@ -2,18 +2,16 @@
 
 import { useState, useMemo } from 'react';
 import Image from 'next/image';
-import { subDays } from 'date-fns';
-import { Timeline } from '@/components/timeline';
-import { TimelineConfig, TimeRange } from '@/types/timeline';
+import { Timeline3DWrapper, type TimeRange } from '@/components/timeline3d/Timeline3DWrapper';
 import logo from '@/assets/txgoatlogo.png';
 
 export default function Home() {
   const [address, setAddress] = useState('');
   const [selectedRange, setSelectedRange] = useState<TimeRange | null>(null);
 
-  // Default timeline config: last 30 days
-  const config: TimelineConfig = useMemo(() => ({
-    minDate: subDays(new Date(), 30),
+  // Default timeline config: 2014 to present (Ethereum launch era to now)
+  const config = useMemo(() => ({
+    minDate: new Date('2014-01-01'),
     maxDate: new Date(),
     minSelectionMs: 60 * 60 * 1000, // Minimum 1 hour selection
   }), []);
@@ -88,7 +86,7 @@ export default function Home() {
             <h2 className="text-lg font-medium text-text mb-6">
               Time Range Selection
             </h2>
-            <Timeline
+            <Timeline3DWrapper
               config={config}
               onSelectionChange={handleSelectionChange}
             />
