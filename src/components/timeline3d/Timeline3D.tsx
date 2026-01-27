@@ -20,11 +20,15 @@ export function Timeline3D({
   onSelectionChange,
 }: Timeline3DProps) {
   // View state tracks the current zoom level and visible date range
-  const [viewState] = useState<ViewState>(() => ({
+  const [viewState, setViewState] = useState<ViewState>(() => ({
     zoomLevel: getZoomLevel(config.minDate, config.maxDate),
     viewStart: config.minDate,
     viewEnd: config.maxDate,
   }));
+
+  // Track if we're zoomed in
+  const isZoomed = viewState.viewStart.getTime() !== config.minDate.getTime() ||
+    viewState.viewEnd.getTime() !== config.maxDate.getTime();
 
   // Selection state
   const [selectedRange, setSelectedRange] = useState<TimeRange | null>(null);
@@ -38,13 +42,52 @@ export function Timeline3D({
     onSelectionChange?.(range);
   }, [onSelectionChange]);
 
+  // Zoom into selection
+  const handleZoomIn = useCallback(() => {
+    if (selectedRange) {
+      setViewState({
+        zoomLevel: getZoomLevel(selectedRange.start, selectedRange.end),
+        viewStart: selectedRange.start,
+        viewEnd: selectedRange.end,
+      });
+      setSelectedRange(null);
+      setClearTrigger(t => t + 1);
+      onSelectionChange?.(null);
+    }
+  }, [selectedRange, onSelectionChange]);
+
+  // Reset to full range
+  const handleReset = useCallback(() => {
+    setViewState({
+      zoomLevel: getZoomLevel(config.minDate, config.maxDate),
+      viewStart: config.minDate,
+      viewEnd: config.maxDate,
+    });
+    setSelectedRange(null);
+    setClearTrigger(t => t + 1);
+    onSelectionChange?.(null);
+  }, [config.minDate, config.maxDate, onSelectionChange]);
+
   return (
     <div className={cn('relative w-full', className)}>
       {/* Info bar */}
-      <div className="flex items-center justify-center mb-4">
+      <div className="flex items-center justify-between mb-4">
         <span className="text-xs font-mono text-text">
           {format(viewState.viewStart, 'MMM yyyy')} — {format(viewState.viewEnd, 'MMM yyyy')}
         </span>
+        {isZoomed && (
+          <button
+            onClick={handleReset}
+            className={cn(
+              'px-3 py-1 text-xs',
+              'bg-cream-dark border border-border',
+              'text-text-muted hover:text-text hover:border-border-dark',
+              'transition-colors duration-150'
+            )}
+          >
+            Reset
+          </button>
+        )}
       </div>
 
       {/* 3D Canvas */}
@@ -57,7 +100,7 @@ export function Timeline3D({
       >
         <Canvas
           camera={{
-            position: [0, 0.5, 3.5],
+            position: [0, 0.5, 4.2],
             fov: 50,
             near: 0.1,
             far: 100,
@@ -97,13 +140,24 @@ export function Timeline3D({
             {selectedRange.end.toLocaleString()}
           </span>
           <button
+            onClick={handleZoomIn}
+            className={cn(
+              'ml-4 px-3 py-1 text-xs',
+              'bg-charcoal border border-charcoal',
+              'text-cream hover:bg-charcoal-light',
+              'transition-colors duration-150'
+            )}
+          >
+            Zoom In
+          </button>
+          <button
             onClick={() => {
               setSelectedRange(null);
               setClearTrigger(t => t + 1);
               onSelectionChange?.(null);
             }}
             className={cn(
-              'ml-4 px-2 py-1 text-xs',
+              'px-2 py-1 text-xs',
               'bg-cream-dark border border-border',
               'text-text-muted hover:text-text hover:border-border-dark',
               'transition-colors duration-150'

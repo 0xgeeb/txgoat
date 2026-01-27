@@ -7,10 +7,11 @@ import logo from '@/assets/txgoatlogo.png';
 import { useChainData } from "../hooks/useChainData"
 
 export default function Home() {
-  const [address, setAddress] = useState('');
+  const [walletAddress, setWalletAddress] = useState('');
+  const [tokenAddress, setTokenAddress] = useState('');
   const [selectedRange, setSelectedRange] = useState<TimeRange | null>(null);
 
-  const { getBlock } = useChainData()
+  const { getBlock, transfers, isLoading } = useChainData()
 
   // Default timeline config: 2014 to present (Ethereum launch era to now)
   const config = useMemo(() => ({
@@ -23,11 +24,12 @@ export default function Home() {
     setSelectedRange(range);
   };
 
-  const isValidAddress = address.length === 42 && address.startsWith('0x');
+  const isValidWalletAddress = walletAddress.length === 42 && walletAddress.startsWith('0x');
+  const isValidTokenAddress = tokenAddress.length === 42 && tokenAddress.startsWith('0x');
 
   const test = () => {
     console.log(selectedRange)
-    getBlock(selectedRange)
+    getBlock(selectedRange, walletAddress, tokenAddress)
   }
 
   return (
@@ -48,7 +50,7 @@ export default function Home() {
             </h1>
           </div>
           <p className="text-text-muted text-sm">
-            Select a time range to explore blockchain history
+            Find when you traded a token
           </p>
         </div>
       </header>
@@ -57,36 +59,53 @@ export default function Home() {
       <main className="flex-1 px-6 pb-12">
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Address Input Section */}
-          <div className="bg-white border border-border p-6">
-            <label
-              htmlFor="eth-address"
-              className="block text-sm font-medium text-text mb-3"
-            >
-              Ethereum Address
-            </label>
-            <div className="flex gap-4">
+          <div className="bg-white border border-border p-6 space-y-4">
+            <div>
+              <label
+                htmlFor="wallet-address"
+                className="block text-sm font-medium text-text mb-2"
+              >
+                Your Wallet Address
+              </label>
               <input
-                id="eth-address"
+                id="wallet-address"
                 type="text"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                value={walletAddress}
+                onChange={(e) => setWalletAddress(e.target.value)}
                 placeholder="0x..."
-                className="input flex-1 font-mono text-sm"
+                className="input w-full font-mono text-sm"
                 spellCheck={false}
                 autoComplete="off"
               />
-              <button
-                className="btn text-sm px-6 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={!isValidAddress}
-              >
-                Load
-              </button>
+              {walletAddress && !isValidWalletAddress && (
+                <p className="mt-2 text-xs text-red-600">
+                  Enter a valid address
+                </p>
+              )}
             </div>
-            {address && !isValidAddress && (
-              <p className="mt-2 text-xs text-red-600">
-                Enter a valid Ethereum address (0x followed by 40 hex characters)
-              </p>
-            )}
+            <div>
+              <label
+                htmlFor="token-address"
+                className="block text-sm font-medium text-text mb-2"
+              >
+                Token Contract Address
+              </label>
+              <input
+                id="token-address"
+                type="text"
+                value={tokenAddress}
+                onChange={(e) => setTokenAddress(e.target.value)}
+                placeholder="0x..."
+                className="input w-full font-mono text-sm"
+                spellCheck={false}
+                autoComplete="off"
+              />
+              {tokenAddress && !isValidTokenAddress && (
+                <p className="mt-2 text-xs text-red-600">
+                  Enter a valid token contract address
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Timeline Section */}
@@ -119,6 +138,56 @@ export default function Home() {
               </div>
             </div>
           )}
+
+          {/* Loading */}
+          {isLoading && (
+            <div className="bg-white border border-border p-4">
+              <p className="text-sm text-text-muted">Searching...</p>
+            </div>
+          )}
+
+          {/* Transfers List */}
+          {transfers.length > 0 && (
+            <div className="bg-white border border-border p-6">
+              <h2 className="text-lg font-medium text-text mb-4">
+                Found {transfers.length} Transfer{transfers.length !== 1 ? 's' : ''}
+              </h2>
+              <div className="space-y-3">
+                {transfers.map((transfer, index) => (
+                  <div
+                    key={`${transfer.txHash}-${index}`}
+                    className="border border-border p-4 bg-cream-dark"
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <span className={`text-sm font-medium ${transfer.direction === 'in' ? 'text-green-600' : 'text-red-600'}`}>
+                        {transfer.direction === 'in' ? 'Received' : 'Sent'}
+                      </span>
+                      <span className="text-xs text-text-muted">
+                        Block {transfer.blockNumber.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="text-sm font-mono mb-2">
+                      <span className="text-text-muted">Amount: </span>
+                      <span className="text-text">{Number(transfer.amount).toLocaleString()}</span>
+                    </div>
+                    <div className="text-xs font-mono text-text-muted truncate">
+                      <span>{transfer.direction === 'in' ? 'From: ' : 'To: '}</span>
+                      <span>{transfer.direction === 'in' ? transfer.from : transfer.to}</span>
+                    </div>
+                    <a
+                      href={`https://etherscan.io/tx/${transfer.txHash}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-blue-600 hover:underline mt-2 inline-block"
+                    >
+                      View on Etherscan
+                    </a>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
         </div>
       </main>
 
