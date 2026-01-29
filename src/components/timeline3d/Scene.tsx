@@ -3,11 +3,9 @@
 import { useRef, useState, useCallback } from 'react';
 import { useThree, ThreeEvent } from '@react-three/fiber';
 import { Vector2, Vector3, Raycaster, Plane } from 'three';
-import { Rod } from './Rod';
 import { Blade } from './Blade';
 import { Tooltip3D } from './Tooltip3D';
-import { SelectionHandle } from './SelectionHandle';
-import { ROD_LENGTH, COLORS } from './constants';
+import { ROD_LENGTH } from './constants';
 import {
   generateMarkers,
   positionToPercent,
@@ -29,9 +27,7 @@ export function Scene({ viewState, onSelectionChange, clearTrigger }: SceneProps
   // Selection state
   const [isDragging, setIsDragging] = useState(false);
   const [selection, setSelection] = useState<{ startPercent: number; endPercent: number } | null>(null);
-  const [hoveredMarkerIndex, setHoveredMarkerIndex] = useState<number | null>(null);
   const [hoverPosition, setHoverPosition] = useState<number | null>(null);
-  const [activeHandle, setActiveHandle] = useState<'start' | 'end' | null>(null);
   const lastClearTrigger = useRef(clearTrigger);
 
   // Clear selection when clearTrigger changes
@@ -48,7 +44,7 @@ export function Scene({ viewState, onSelectionChange, clearTrigger }: SceneProps
   const mouse = useRef(new Vector2());
 
   // Generate markers based on current view
-  const markers = generateMarkers(viewState, selection, hoveredMarkerIndex);
+  const markers = generateMarkers(viewState, selection, null);
 
   // Get position on rod from mouse event
   const getPositionFromMouse = useCallback((clientX: number, clientY: number): number | null => {
@@ -77,7 +73,6 @@ export function Scene({ viewState, onSelectionChange, clearTrigger }: SceneProps
       dragStartRef.current = pos;
       const percent = positionToPercent(pos);
       setSelection({ startPercent: percent, endPercent: percent });
-      setActiveHandle(null);
     }
   }, [getPositionFromMouse]);
 
@@ -122,46 +117,34 @@ export function Scene({ viewState, onSelectionChange, clearTrigger }: SceneProps
     }
 
     setIsDragging(false);
-    setActiveHandle(null);
     dragStartRef.current = null;
   }, [isDragging, selection, viewState, onSelectionChange]);
 
   const handlePointerLeave = useCallback(() => {
     setHoverPosition(null);
-    setHoveredMarkerIndex(null);
-  }, []);
+    // Cancel any in-progress selection when mouse leaves
+    if (isDragging) {
+      setIsDragging(false);
+      setSelection(null);
+      dragStartRef.current = null;
+      onSelectionChange(null);
+    }
+  }, [isDragging, onSelectionChange]);
 
   // Compute hover date for tooltip
   const hoverDate = hoverPosition !== null
     ? positionToDate(hoverPosition, viewState.viewStart, viewState.viewEnd)
     : null;
 
-  // Calculate handle positions
-  const startHandlePos = selection ? percentToPosition(Math.min(selection.startPercent, selection.endPercent)) : 0;
-  const endHandlePos = selection ? percentToPosition(Math.max(selection.startPercent, selection.endPercent)) : 0;
-  const showHandles = selection && Math.abs(selection.endPercent - selection.startPercent) > 2 && !isDragging;
+  // Calculate blade width - touching with tiny gap for edge visibility
+  const bladeWidth = (ROD_LENGTH / markers.length) * 0.98;
 
   return (
     <group>
-      {/* Lighting - more dramatic setup */}
-      <ambientLight intensity={0.4} color={COLORS.ambient} />
-      <directionalLight
-        position={[5, 8, 5]}
-        intensity={1}
-        color="#ffffff"
-        castShadow
-      />
-      <directionalLight
-        position={[-3, 4, 8]}
-        intensity={0.4}
-        color="#ffffff"
-      />
-      {/* Subtle rim light from below */}
-      <directionalLight
-        position={[0, -5, 3]}
-        intensity={0.2}
-        color={COLORS.cream}
-      />
+      {/* Simple lighting */}
+      <ambientLight intensity={0.6} />
+      <directionalLight position={[5, 10, 5]} intensity={1} />
+      <directionalLight position={[-5, 5, 5]} intensity={0.3} />
 
       {/* Interactive plane for mouse events */}
       <mesh
@@ -175,39 +158,21 @@ export function Scene({ viewState, onSelectionChange, clearTrigger }: SceneProps
         <meshBasicMaterial transparent opacity={0} />
       </mesh>
 
-      {/* The rod */}
-      <Rod />
-
       {/* Blades (time markers) */}
       {markers.map((marker) => (
         <Blade
           key={marker.id}
           position={marker.position}
+          width={bladeWidth}
           isSelected={marker.isSelected}
           isHovered={marker.isHovered}
         />
       ))}
 
-      {/* Selection handles */}
-      {showHandles && (
-        <>
-          <SelectionHandle
-            position={startHandlePos}
-            isActive={activeHandle === 'start'}
-            side="start"
-          />
-          <SelectionHandle
-            position={endHandlePos}
-            isActive={activeHandle === 'end'}
-            side="end"
-          />
-        </>
-      )}
-
       {/* Tooltip */}
       {hoverDate && hoverPosition !== null && !isDragging && (
         <Tooltip3D
-          position={[hoverPosition, 0.6, 0]}
+          position={[hoverPosition, 0.5, 0]}
           visible={true}
           dateLabel={formatDateForZoom(hoverDate, viewState.zoomLevel)}
         />

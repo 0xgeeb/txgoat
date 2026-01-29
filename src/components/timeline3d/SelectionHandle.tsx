@@ -2,7 +2,7 @@
 
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Mesh, Group } from 'three';
+import { Mesh, Group, MeshStandardMaterial } from 'three';
 import * as THREE from 'three';
 import { COLORS, HANDLE_RADIUS } from './constants';
 
@@ -15,65 +15,93 @@ interface SelectionHandleProps {
 export function SelectionHandle({ position, isActive, side }: SelectionHandleProps) {
   const groupRef = useRef<Group>(null);
   const sphereRef = useRef<Mesh>(null);
+  const sphereMaterialRef = useRef<MeshStandardMaterial>(null);
   const ringRef = useRef<Mesh>(null);
+  const outerRingRef = useRef<Mesh>(null);
 
   useFrame((state, delta) => {
     if (!groupRef.current || !sphereRef.current) return;
 
-    const lerpFactor = 1 - Math.pow(0.001, delta);
+    const time = state.clock.elapsedTime;
+    const lerpFactor = 1 - Math.exp(-12 * delta);
 
-    // Animate position
+    // Animate position smoothly
     groupRef.current.position.x = THREE.MathUtils.lerp(
       groupRef.current.position.x,
       position,
       lerpFactor
     );
 
-    // Scale up when active
-    const targetScale = isActive ? 1.2 : 1;
+    // Scale up when active with subtle pulse
+    const pulseScale = isActive ? 1.15 + Math.sin(time * 4) * 0.05 : 1;
     sphereRef.current.scale.setScalar(
-      THREE.MathUtils.lerp(sphereRef.current.scale.x, targetScale, lerpFactor)
+      THREE.MathUtils.lerp(sphereRef.current.scale.x, pulseScale, lerpFactor)
     );
 
-    // Rotate ring
-    if (ringRef.current) {
-      ringRef.current.rotation.x += delta * (isActive ? 3 : 1);
+    // Emissive glow on sphere
+    if (sphereMaterialRef.current) {
+      const targetEmissive = isActive ? 0.3 : 0.1;
+      sphereMaterialRef.current.emissiveIntensity = THREE.MathUtils.lerp(
+        sphereMaterialRef.current.emissiveIntensity,
+        targetEmissive + Math.sin(time * 3) * 0.05,
+        lerpFactor
+      );
     }
 
-    // Subtle hover animation
-    const hover = Math.sin(state.clock.elapsedTime * 2) * 0.02;
-    groupRef.current.position.y = hover;
+    // Rotate inner ring
+    if (ringRef.current) {
+      ringRef.current.rotation.x += delta * (isActive ? 2.5 : 0.8);
+      ringRef.current.rotation.z += delta * 0.3;
+    }
+
+    // Rotate outer ring in opposite direction
+    if (outerRingRef.current) {
+      outerRingRef.current.rotation.y += delta * (isActive ? -1.5 : -0.5);
+    }
+
+    // Subtle floating animation
+    const floatY = Math.sin(time * 2 + (side === 'start' ? 0 : Math.PI)) * 0.025;
+    const floatZ = Math.cos(time * 1.5) * 0.01;
+    groupRef.current.position.y = floatY;
+    groupRef.current.position.z = 0.15 + floatZ;
   });
 
   return (
-    <group ref={groupRef} position={[position, 0, 0]}>
-      {/* Main sphere */}
+    <group ref={groupRef} position={[position, 0, 0.15]}>
+      {/* Main sphere with glow */}
       <mesh ref={sphereRef}>
-        <sphereGeometry args={[HANDLE_RADIUS, 16, 16]} />
+        <sphereGeometry args={[HANDLE_RADIUS, 24, 24]} />
         <meshStandardMaterial
+          ref={sphereMaterialRef}
           color={COLORS.handleColor}
-          metalness={0.8}
-          roughness={0.2}
+          metalness={0.9}
+          roughness={0.1}
+          emissive={COLORS.glowColor}
+          emissiveIntensity={0.1}
         />
       </mesh>
 
-      {/* Decorative ring */}
+      {/* Inner decorative ring */}
       <mesh ref={ringRef} rotation={[Math.PI / 2, 0, 0]}>
-        <torusGeometry args={[HANDLE_RADIUS * 1.4, 0.015, 8, 32]} />
+        <torusGeometry args={[HANDLE_RADIUS * 1.3, 0.012, 8, 48]} />
+        <meshStandardMaterial
+          color={COLORS.glowColor}
+          metalness={0.7}
+          roughness={0.2}
+          emissive={COLORS.glowColor}
+          emissiveIntensity={0.2}
+        />
+      </mesh>
+
+      {/* Outer decorative ring */}
+      <mesh ref={outerRingRef} rotation={[Math.PI / 3, 0, 0]}>
+        <torusGeometry args={[HANDLE_RADIUS * 1.6, 0.008, 6, 48]} />
         <meshStandardMaterial
           color={COLORS.charcoalLight}
           metalness={0.6}
           roughness={0.3}
-        />
-      </mesh>
-
-      {/* Direction indicator line */}
-      <mesh position={[side === 'start' ? 0.15 : -0.15, 0, 0]}>
-        <boxGeometry args={[0.1, 0.02, 0.02]} />
-        <meshStandardMaterial
-          color={COLORS.charcoal}
-          metalness={0.5}
-          roughness={0.5}
+          transparent
+          opacity={0.6}
         />
       </mesh>
     </group>

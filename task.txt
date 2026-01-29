@@ -1,0 +1,23 @@
+I already have a fully functional 3D timeline date-range selector in my web app.
+Do NOT redesign the interaction or data model.
+Your job is to make it look and feel excellent.
+
+Core interaction concept
+
+A horizontal timeline made of evenly spaced vertical 3D pillars / columns
+Each pillar represents a fixed time slice (e.g. 1 day or 1 week)
+Pillars extend upward from a base plane
+Pillars visually respond when the user clicks and drags across them
+
+Interaction behavior
+
+Dragging the mouse horizontally selects a contiguous range of pillars
+Selected pillars:
+grow taller OR smoothly animate upward
+shift color (e.g. neutral → accent color)
+optionally emit subtle glow or light
+Non-selected pillars remain muted
+Hovering a pillar previews its date
+On drag end, the component outputs:
+start timestamp
+end timestamp
