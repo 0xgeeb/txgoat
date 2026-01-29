@@ -83,7 +83,7 @@ export function generateMarkers(
 export function formatDateForZoom(date: Date, zoomLevel: ZoomLevel): string {
   switch (zoomLevel) {
     case 'years':
-      return format(date, 'yyyy');
+      return format(date, 'MMM yyyy');
     case 'months':
       return format(date, 'MMM yyyy');
     case 'weeks':
