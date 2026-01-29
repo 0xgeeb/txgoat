@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react'
-import { createPublicClient, http, parseAbiItem, formatUnits, type Chain } from 'viem'
-import { mainnet } from 'viem/chains'
+import { useState, useMemo } from 'react'
+import { createPublicClient, http, parseAbiItem, formatUnits, type Chain, type PublicClient } from 'viem'
+import { TimeRange } from '@/types/timeline'
 
 export interface TokenTransfer {
     txHash: string
@@ -20,30 +20,34 @@ export function useChainData() {
     const etherscanApiKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY ?? ''
     const rpc = process.env.NEXT_PUBLIC_MAINNET_RPC ?? ''
 
-    const mainnetChain = {
-        id: 1,
-        name: "Mainnet",
-        nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-        rpcUrls: { default: { http: [rpc] }, public: { http: [rpc] } }
-    } as const satisfies Chain
+    const client = useMemo<PublicClient | null>(() => {
+        if (!rpc) return null
 
-    const client = createPublicClient({
-        chain: mainnetChain,
-        transport: http()
-    })
+        const mainnetChain = {
+            id: 1,
+            name: "Mainnet",
+            nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+            rpcUrls: { default: { http: [rpc] }, public: { http: [rpc] } }
+        } as const satisfies Chain
+
+        return createPublicClient({
+            chain: mainnetChain,
+            transport: http()
+        })
+    }, [rpc])
 
     const step = 2000
 
-    const getBlock = async (selectedRange: any, walletAddress: string, tokenAddress: string) => {
-        if (!selectedRange || !walletAddress || !tokenAddress) return
+    const getBlock = async (selectedRange: TimeRange | null, walletAddress: string, tokenAddress: string) => {
+        if (!selectedRange || !walletAddress || !tokenAddress || !client) return
 
         setIsLoading(true)
         setTransfers([])
         const foundTransfers: TokenTransfer[] = []
 
         try {
-            const startTimestamp = Math.floor(Date.parse(selectedRange.start) / 1000)
-            const endTimestamp = Math.floor(Date.parse(selectedRange.end) / 1000)
+            const startTimestamp = Math.floor(selectedRange.start.getTime() / 1000)
+            const endTimestamp = Math.floor(selectedRange.end.getTime() / 1000)
 
             console.log('Finding block range...')
 
