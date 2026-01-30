@@ -62,6 +62,14 @@ export function useChainData() {
             const endBlock = Number(responseEnd.result)
             const totalBlocks = endBlock - startBlock
 
+            // Fetch token decimals
+            const decimals = await client.readContract({
+                address: tokenAddress as `0x${string}`,
+                abi: [{ type: 'function', name: 'decimals', inputs: [], outputs: [{ type: 'uint8' }] }],
+                functionName: 'decimals'
+            })
+            console.log(`Token decimals: ${decimals}`)
+
             const walletLower = walletAddress.toLowerCase()
 
             for (let from = startBlock; from <= endBlock; from += step) {
@@ -95,7 +103,7 @@ export function useChainData() {
                             blockNumber: log.blockNumber,
                             from: log.args.from as string,
                             to: log.args.to as string,
-                            amount: formatUnits(log.args.value as bigint, 18),
+                            amount: formatUnits(log.args.value as bigint, decimals),
                             direction: logFrom === walletLower ? 'out' : 'in'
                         }
                         console.log('Formatted transfer:', transfer)

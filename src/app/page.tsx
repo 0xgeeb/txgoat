@@ -247,7 +247,7 @@ export default function Home() {
                 {/* No results state */}
                 {!isLoading && transfers.length === 0 && (
                   <div className="bg-white border border-border p-6 text-center">
-                    <p className="text-text-muted">No transfers found yet. Results will appear here as they&apos;re discovered.</p>
+                    <p className="text-text-muted">No transfers found for this time range.</p>
                   </div>
                 )}
               </div>
