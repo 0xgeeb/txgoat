@@ -16,6 +16,7 @@ export interface TokenTransfer {
 export function useChainData() {
     const [transfers, setTransfers] = useState<TokenTransfer[]>([])
     const [isLoading, setIsLoading] = useState(false)
+    const [progress, setProgress] = useState(0)
 
     const etherscanApiKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY ?? ''
     const rpc = process.env.NEXT_PUBLIC_MAINNET_RPC ?? ''
@@ -43,6 +44,7 @@ export function useChainData() {
 
         setIsLoading(true)
         setTransfers([])
+        setProgress(0)
         const foundTransfers: TokenTransfer[] = []
 
         try {
@@ -65,6 +67,7 @@ export function useChainData() {
             for (let from = startBlock; from <= endBlock; from += step) {
                 const to = Math.min(from + step - 1, endBlock)
                 const progressPct = Math.round(((from - startBlock) / totalBlocks) * 100)
+                setProgress(progressPct)
                 console.log(`Scanning blocks ${from.toLocaleString()} - ${to.toLocaleString()} (${progressPct}%)`)
 
                 const blockLogs = await client.getLogs({
@@ -79,6 +82,14 @@ export function useChainData() {
                     const logTo = (log.args.to as string).toLowerCase()
 
                     if (logFrom === walletLower || logTo === walletLower) {
+                        console.log('Raw transfer log:', {
+                            txHash: log.transactionHash,
+                            blockNumber: log.blockNumber,
+                            from: log.args.from,
+                            to: log.args.to,
+                            rawValue: log.args.value,
+                            rawValueString: log.args.value?.toString(),
+                        })
                         const transfer: TokenTransfer = {
                             txHash: log.transactionHash,
                             blockNumber: log.blockNumber,
@@ -87,11 +98,13 @@ export function useChainData() {
                             amount: formatUnits(log.args.value as bigint, 18),
                             direction: logFrom === walletLower ? 'out' : 'in'
                         }
+                        console.log('Formatted transfer:', transfer)
                         foundTransfers.push(transfer)
                         setTransfers([...foundTransfers])
                     }
                 }
             }
+            setProgress(100)
         } catch (error) {
             console.error('Error fetching transfers:', error)
         } finally {
@@ -102,6 +115,7 @@ export function useChainData() {
     return {
         getBlock,
         transfers,
-        isLoading
+        isLoading,
+        progress
     }
 }

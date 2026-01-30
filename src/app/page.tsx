@@ -12,7 +12,7 @@ export default function Home() {
   const [selectedRange, setSelectedRange] = useState<TimeRange | null>(null);
   const [isSearchMode, setIsSearchMode] = useState(false);
 
-  const { getBlock, transfers, isLoading } = useChainData()
+  const { getBlock, transfers, isLoading, progress } = useChainData()
 
   // Default timeline config: 2014 to present (Ethereum launch era to now)
   const config = useMemo(() => ({
@@ -181,12 +181,23 @@ export default function Home() {
           <div className={`flex-1 transition-all duration-500 ${isSearchMode ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden'}`}>
             {isSearchMode && (
               <div className="space-y-4">
-                {/* Loading */}
+                {/* Progress Bar */}
                 {isLoading && (
-                  <div className="bg-white border border-border p-6">
-                    <div className="flex items-center gap-3">
-                      <div className="w-5 h-5 border-2 border-text border-t-transparent rounded-full animate-spin" />
-                      <p className="text-sm text-text-muted">Searching for transfers...</p>
+                  <div className="flex items-center justify-center min-h-[200px]">
+                    <div className="w-full max-w-md">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-sm text-text-muted">Scanning blocks...</p>
+                        <p className="text-sm font-mono text-text">{progress}%</p>
+                      </div>
+                      <div className="h-4 bg-gray-200 border border-border overflow-hidden">
+                        <div
+                          className="h-full bg-green-500 transition-all duration-300 ease-out"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-text-muted mt-2 text-center">
+                        Found {transfers.length} transfer{transfers.length !== 1 ? 's' : ''} so far
+                      </p>
                     </div>
                   </div>
                 )}
