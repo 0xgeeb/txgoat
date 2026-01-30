@@ -69,10 +69,10 @@ export default function Home() {
       <main className="flex-1 px-6 pb-12">
         <div className={`flex transition-all duration-500 ${isSearchMode ? 'gap-6' : 'max-w-4xl mx-auto'}`}>
           {/* Form Section - becomes sidebar in search mode */}
-          <div className={`transition-all duration-500 ease-in-out ${isSearchMode ? 'w-80 flex-shrink-0' : 'w-full'}`}>
-            <div className="space-y-4">
+          <div className={`transition-all duration-500 ease-in-out ${isSearchMode ? 'w-80 flex-shrink-0 min-w-0 overflow-hidden' : 'w-full'}`}>
+            <div className="space-y-4 min-w-0">
               {/* Address Input Section */}
-              <div className="bg-white border border-border p-6 space-y-4">
+              <div className="bg-white border border-border p-6 space-y-4 min-w-0 overflow-hidden">
                 <div>
                   <label
                     htmlFor="wallet-address"
@@ -86,7 +86,7 @@ export default function Home() {
                     value={walletAddress}
                     onChange={(e) => setWalletAddress(e.target.value)}
                     placeholder="0x..."
-                    className="input w-full font-mono text-sm"
+                    className="input w-full font-mono text-sm min-w-0"
                     spellCheck={false}
                     autoComplete="off"
                   />
@@ -109,7 +109,7 @@ export default function Home() {
                     value={tokenAddress}
                     onChange={(e) => setTokenAddress(e.target.value)}
                     placeholder="0x..."
-                    className="input w-full font-mono text-sm"
+                    className="input w-full font-mono text-sm min-w-0"
                     spellCheck={false}
                     autoComplete="off"
                   />
@@ -122,7 +122,7 @@ export default function Home() {
               </div>
 
               {/* Timeline Section */}
-              <div className="bg-white border border-border p-6">
+              <div className="bg-white border border-border p-6 min-w-0 overflow-hidden">
                 <h2 className={`font-medium text-text mb-6 transition-all duration-500 ${isSearchMode ? 'text-sm' : 'text-lg'}`}>
                   Time Range Selection
                 </h2>
@@ -162,7 +162,7 @@ export default function Home() {
                     : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 }`}
               >
-                {isLoading ? 'Searching...' : 'Search Transfers'}
+                {isLoading ? 'Searching...' : 'Search'}
               </button>
 
               {/* Back button in search mode */}
