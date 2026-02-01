@@ -9,33 +9,43 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        sans: ["var(--font-mono)", "ui-monospace", "monospace"],
+        display: ["var(--font-display)", "Georgia", "serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        // Cream minimal palette
         cream: {
           DEFAULT: "#FAF7F2",
-          dark: "#F0EDE6",
+          dark: "#EBE6DB",
+          accent: "#E5DFD3",
         },
         border: {
-          DEFAULT: "#E0DDD6",
-          dark: "#C4C0B8",
+          DEFAULT: "#0a0a0a",
+          light: "#d4cfc4",
         },
         text: {
-          DEFAULT: "#1a1a1a",
-          muted: "#666666",
+          DEFAULT: "#0a0a0a",
+          muted: "#5a5a5a",
         },
         charcoal: {
-          DEFAULT: "#333333",
-          light: "#555555",
+          DEFAULT: "#0a0a0a",
+          light: "#2a2a2a",
         },
-        selection: "#E8E4DC",
+        selection: "#0a0a0a",
+        accent: "#8B4513",
+        success: "#2d5a27",
+        danger: "#8b2020",
       },
       boxShadow: {
-        subtle: "0 1px 3px rgba(0, 0, 0, 0.08)",
-        card: "0 2px 8px rgba(0, 0, 0, 0.06)",
+        brutal: "4px 4px 0 #0a0a0a",
+        "brutal-sm": "2px 2px 0 #0a0a0a",
+        "brutal-lg": "6px 6px 0 #0a0a0a",
+      },
+      animation: {
+        "slide-in": "slide-in 0.4s ease-out",
+        "fade-in": "fade-in 0.3s ease-out",
       },
     },
   },

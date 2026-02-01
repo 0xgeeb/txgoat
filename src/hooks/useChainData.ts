@@ -63,11 +63,12 @@ export function useChainData() {
             const totalBlocks = endBlock - startBlock
 
             // Fetch token decimals
-            const decimals = await client.readContract({
+            const decimalsResult = await client.readContract({
                 address: tokenAddress as `0x${string}`,
                 abi: [{ type: 'function', name: 'decimals', inputs: [], outputs: [{ type: 'uint8' }] }],
                 functionName: 'decimals'
             })
+            const decimals = Number(decimalsResult)
             console.log(`Token decimals: ${decimals}`)
 
             const walletLower = walletAddress.toLowerCase()

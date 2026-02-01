@@ -1,36 +1,45 @@
-// Colors matching the cream/charcoal theme
+// Colors matching the neo-editorial brutalist theme
 export const COLORS = {
   cream: '#FAF7F2',
-  creamDark: '#F0EDE6',
-  border: '#E0DDD6',
-  borderDark: '#C4C0B8',
-  charcoal: '#333333',
-  charcoalLight: '#555555',
-  selection: '#E8E4DC',
-  // 3D specific
-  bladeIdle: '#d0ccc4',
-  bladeSelected: '#333333',
-  bladeHovered: '#888888',
-  glowColor: '#6699ff',
-  ambient: '#FFF8F0',
+  creamDark: '#EBE6DB',
+  creamAccent: '#E5DFD3',
+  border: '#0a0a0a',
+  borderLight: '#d4cfc4',
+  charcoal: '#0a0a0a',
+  charcoalLight: '#2a2a2a',
+  // 3D specific - high contrast
+  bladeIdle: '#c4bfb4',
+  bladeSelected: '#0a0a0a',
+  bladeHovered: '#6a6560',
+  glowColor: '#0a0a0a',
+  ambient: '#FAF7F2',
+  // Rod material
+  rodColor: '#b8b3a8',
+  rodMetalness: 0.3,
+  rodRoughness: 0.7,
+  // Handle color
+  handleColor: '#0a0a0a',
 };
+
+// Rod geometry
+export const ROD_RADIUS = 0.02;
 
 // Geometry constants
 export const ROD_LENGTH = 8;
 
 // Blade (time marker) constants
 export const BLADE_HEIGHT_IDLE = 0.3;
-export const BLADE_HEIGHT_SELECTED = 0.8;
-export const BLADE_DEPTH = 0.01; // Flat, no visible depth
+export const BLADE_HEIGHT_SELECTED = 0.9;
+export const BLADE_DEPTH = 0.015; // Slightly thicker for more presence
 
 // Handle constants
 export const HANDLE_RADIUS = 0.1;
 
 // Animation
 export const SPRING_CONFIG = {
-  stiffness: 300,
-  damping: 30,
-  mass: 0.5,
+  stiffness: 400,
+  damping: 35,
+  mass: 0.4,
 };
 
 // Marker counts per zoom level - dense for dramatic effect

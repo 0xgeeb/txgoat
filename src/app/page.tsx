@@ -41,44 +41,51 @@ export default function Home() {
   const canSearch = isValidWalletAddress && isValidTokenAddress && selectedRange;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col relative noise-overlay">
+      {/* Decorative corner element */}
+      <div className="fixed top-0 right-0 w-32 h-32 bg-charcoal clip-path-triangle pointer-events-none"
+           style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%)' }} />
+
       {/* Header */}
-      <header className={`pt-8 pb-6 px-6 transition-all duration-500 ${isSearchMode ? 'py-4' : ''}`}>
-        <div className={`transition-all duration-500 ${isSearchMode ? 'max-w-full' : 'max-w-4xl mx-auto text-center'}`}>
-          <div className={`flex items-center gap-3 mb-2 transition-all duration-500 ${isSearchMode ? 'justify-start' : 'justify-center'}`}>
+      <header className={`h-32 px-8 flex items-center transition-all duration-500 ${isSearchMode ? 'h-16' : ''}`}>
+        <div className={`transition-all duration-500 w-full ${isSearchMode ? 'max-w-full' : 'max-w-5xl mx-auto text-center'}`}>
+          <div className={`flex items-center gap-4 transition-all duration-500 ${isSearchMode ? 'justify-start' : 'justify-center'}`}>
             <Image
               src={logo}
               alt="TxGoat Logo"
               width={48}
               height={48}
-              className={`transition-all duration-500 ${isSearchMode ? 'w-8 h-8' : 'w-12 h-12'}`}
+              className={`transition-all duration-500 ${isSearchMode ? 'w-10 h-10' : 'w-12 h-12'}`}
             />
-            <h1 className={`font-semibold text-text transition-all duration-500 ${isSearchMode ? 'text-2xl' : 'text-4xl md:text-5xl'}`}>
+            <h1 className={`font-display italic text-text transition-all duration-500 tracking-tight ${isSearchMode ? 'text-3xl' : 'text-4xl md:text-5xl'}`}>
               TxGoat
             </h1>
           </div>
           {!isSearchMode && (
-            <p className="text-text-muted text-sm">
-              Find when you traded a token
+            <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] mt-2">
+              Ethereum Token Transfer Explorer
             </p>
           )}
         </div>
       </header>
 
+      {/* Divider - aligns with bottom of corner triangle */}
+      <div className="divider" />
+
       {/* Main Content */}
-      <main className="flex-1 px-6 pb-12">
-        <div className={`flex transition-all duration-500 ${isSearchMode ? 'gap-6' : 'max-w-4xl mx-auto'}`}>
+      <main className="flex-1 px-8 py-6">
+        <div className={`flex transition-all duration-500 ${isSearchMode ? 'gap-8' : 'max-w-5xl mx-auto'}`}>
           {/* Form Section - becomes sidebar in search mode */}
-          <div className={`transition-all duration-500 ease-in-out ${isSearchMode ? 'w-80 flex-shrink-0 min-w-0 overflow-hidden' : 'w-full'}`}>
+          <div className={`transition-all duration-500 ease-in-out ${isSearchMode ? 'w-96 flex-shrink-0 min-w-0 overflow-hidden' : 'w-full'}`}>
             <div className="space-y-4 min-w-0">
               {/* Address Input Section */}
-              <div className="bg-white border border-border p-6 space-y-4 min-w-0 overflow-hidden">
+              <div className="card-accent p-5 space-y-4 min-w-0 overflow-hidden">
                 <div>
                   <label
                     htmlFor="wallet-address"
-                    className="block text-sm font-medium text-text mb-2"
+                    className="label block mb-2"
                   >
-                    Your Wallet Address
+                    Wallet Address
                   </label>
                   <input
                     id="wallet-address"
@@ -86,22 +93,22 @@ export default function Home() {
                     value={walletAddress}
                     onChange={(e) => setWalletAddress(e.target.value)}
                     placeholder="0x..."
-                    className="input w-full font-mono text-sm min-w-0"
+                    className="input w-full min-w-0"
                     spellCheck={false}
                     autoComplete="off"
                   />
                   {walletAddress && !isValidWalletAddress && (
-                    <p className="mt-2 text-xs text-red-600">
-                      Enter a valid address
+                    <p className="mt-1 text-xs text-danger font-medium uppercase tracking-wide">
+                      Invalid address
                     </p>
                   )}
                 </div>
                 <div>
                   <label
                     htmlFor="token-address"
-                    className="block text-sm font-medium text-text mb-2"
+                    className="label block mb-2"
                   >
-                    Token Contract Address
+                    Token Address
                   </label>
                   <input
                     id="token-address"
@@ -109,69 +116,49 @@ export default function Home() {
                     value={tokenAddress}
                     onChange={(e) => setTokenAddress(e.target.value)}
                     placeholder="0x..."
-                    className="input w-full font-mono text-sm min-w-0"
+                    className="input w-full min-w-0"
                     spellCheck={false}
                     autoComplete="off"
                   />
                   {tokenAddress && !isValidTokenAddress && (
-                    <p className="mt-2 text-xs text-red-600">
-                      Enter a valid token contract address
+                    <p className="mt-1 text-xs text-danger font-medium uppercase tracking-wide">
+                      Invalid address
                     </p>
                   )}
                 </div>
               </div>
 
               {/* Timeline Section */}
-              <div className="bg-white border border-border p-6 min-w-0 overflow-hidden">
-                <h2 className={`font-medium text-text mb-6 transition-all duration-500 ${isSearchMode ? 'text-sm' : 'text-lg'}`}>
-                  Time Range Selection
-                </h2>
+              <div className="card-accent p-5 min-w-0 overflow-hidden">
                 <Timeline3DWrapper
                   config={config}
                   onSelectionChange={handleSelectionChange}
                 />
               </div>
 
-              {/* Selected Range Info */}
-              {/* {selectedRange && (
-                <div className="bg-cream-dark border border-border p-4">
-                  <div className={`flex items-center ${isSearchMode ? 'flex-col gap-2' : 'justify-between'}`}>
-                    <span className="text-sm text-text-muted">
-                      Selected Range:
-                    </span>
-                    <div className={`text-sm font-mono ${isSearchMode ? 'text-center' : ''}`}>
-                      <span className="text-text">
-                        {selectedRange.start.toLocaleDateString()}
-                      </span>
-                      <span className="text-text-muted mx-2">to</span>
-                      <span className="text-text">
-                        {selectedRange.end.toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )} */}
-
               {/* Search Button */}
               <button
                 onClick={handleSearch}
                 disabled={!canSearch || isLoading}
-                className={`w-full py-3 px-6 font-medium transition-all duration-300 ${
-                  canSearch && !isLoading
-                    ? 'bg-text text-white hover:bg-text/90 cursor-pointer'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
+                className="btn w-full py-3 text-xs"
               >
-                {isLoading ? 'Searching...' : 'Search'}
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="inline-block w-3 h-3 border-2 border-cream border-t-transparent animate-spin" />
+                    Scanning
+                  </span>
+                ) : (
+                  'Search Transfers'
+                )}
               </button>
 
               {/* Back button in search mode */}
               {isSearchMode && (
                 <button
                   onClick={handleBackToForm}
-                  className="w-full py-2 px-4 text-sm text-text-muted hover:text-text border border-border bg-white transition-colors"
+                  className="btn-secondary w-full"
                 >
-                  ← Back to Full View
+                  <span className="mr-2">&larr;</span> Back to Full View
                 </button>
               )}
             </div>
@@ -180,23 +167,23 @@ export default function Home() {
           {/* Results Section - only visible in search mode */}
           <div className={`flex-1 transition-all duration-500 ${isSearchMode ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden'}`}>
             {isSearchMode && (
-              <div className="space-y-4">
+              <div className="space-y-6 animate-fade-in">
                 {/* Progress Bar */}
                 {isLoading && (
                   <div className="flex items-center justify-center min-h-[200px]">
-                    <div className="w-full max-w-md">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-sm text-text-muted">Scanning blocks...</p>
-                        <p className="text-sm font-mono text-text">{progress}%</p>
+                    <div className="w-full max-w-lg">
+                      <div className="flex items-center justify-between mb-4">
+                        <p className="label">Scanning Blockchain</p>
+                        <p className="text-2xl font-display italic text-text">{progress}%</p>
                       </div>
-                      <div className="h-4 bg-gray-200 border border-border overflow-hidden">
+                      <div className="progress-track">
                         <div
-                          className="h-full bg-green-500 transition-all duration-300 ease-out"
+                          className="progress-fill"
                           style={{ width: `${progress}%` }}
                         />
                       </div>
-                      <p className="text-xs text-text-muted mt-2 text-center">
-                        Found {transfers.length} transfer{transfers.length !== 1 ? 's' : ''} so far
+                      <p className="text-xs text-text-muted mt-4 uppercase tracking-wider">
+                        {transfers.length} transfer{transfers.length !== 1 ? 's' : ''} found
                       </p>
                     </div>
                   </div>
@@ -204,39 +191,57 @@ export default function Home() {
 
                 {/* Transfers List */}
                 {transfers.length > 0 && (
-                  <div className="bg-white border border-border p-6">
-                    <h2 className="text-lg font-medium text-text mb-4">
-                      Found {transfers.length} Transfer{transfers.length !== 1 ? 's' : ''}
-                    </h2>
-                    <div className="space-y-3 max-h-[calc(100vh-300px)] overflow-y-auto">
+                  <div className="card p-6">
+                    <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-charcoal">
+                      <h2 className="font-display italic text-3xl text-text">
+                        Transfers
+                      </h2>
+                      <div className="bg-charcoal text-cream px-4 py-2">
+                        <span className="text-sm font-mono">{transfers.length}</span>
+                      </div>
+                    </div>
+                    <div className="space-y-4 max-h-[calc(100vh-350px)] overflow-y-auto custom-scrollbar pr-2">
                       {transfers.map((transfer, index) => (
                         <div
                           key={`${transfer.txHash}-${index}`}
-                          className="border border-border p-4 bg-cream-dark"
+                          className="transfer-card p-5 animate-slide-in"
+                          style={{ animationDelay: `${index * 0.05}s` }}
                         >
-                          <div className="flex items-center justify-between mb-2">
-                            <span className={`text-sm font-medium ${transfer.direction === 'in' ? 'text-green-600' : 'text-red-600'}`}>
+                          <div className="flex items-start justify-between mb-4">
+                            <span className={transfer.direction === 'in' ? 'badge-in' : 'badge-out'}>
                               {transfer.direction === 'in' ? 'Received' : 'Sent'}
                             </span>
-                            <span className="text-xs text-text-muted">
-                              Block {transfer.blockNumber.toLocaleString()}
+                            <div className="text-right">
+                              <span className="text-xs text-text-muted font-mono block">
+                                Block #{transfer.blockNumber.toLocaleString()}
+                              </span>
+                              <span className="text-[10px] text-text-muted font-mono">
+                                {transfer.txHash.slice(0, 10)}...{transfer.txHash.slice(-8)}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="mb-4">
+                            <span className="label block mb-1">Amount</span>
+                            <span className="text-2xl font-display italic text-text">
+                              {Number(transfer.amount).toLocaleString()}
                             </span>
                           </div>
-                          <div className="text-sm font-mono mb-2">
-                            <span className="text-text-muted">Amount: </span>
-                            <span className="text-text">{Number(transfer.amount).toLocaleString()}</span>
-                          </div>
-                          <div className="text-xs font-mono text-text-muted truncate">
-                            <span>{transfer.direction === 'in' ? 'From: ' : 'To: '}</span>
-                            <span>{transfer.direction === 'in' ? transfer.from : transfer.to}</span>
+                          <div className="mb-4">
+                            <span className="label block mb-1">
+                              {transfer.direction === 'in' ? 'From' : 'To'}
+                            </span>
+                            <span className="text-xs font-mono text-text-muted break-all">
+                              {transfer.direction === 'in' ? transfer.from : transfer.to}
+                            </span>
                           </div>
                           <a
                             href={`https://etherscan.io/tx/${transfer.txHash}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-xs text-blue-600 hover:underline mt-2 inline-block"
+                            className="inline-flex items-center gap-2 text-xs uppercase tracking-wider bg-charcoal text-cream hover:bg-cream hover:text-charcoal px-3 py-2 border-2 border-charcoal transition-colors"
                           >
                             View on Etherscan
+                            <span>&rarr;</span>
                           </a>
                         </div>
                       ))}
@@ -246,8 +251,13 @@ export default function Home() {
 
                 {/* No results state */}
                 {!isLoading && transfers.length === 0 && (
-                  <div className="bg-white border border-border p-6 text-center">
-                    <p className="text-text-muted">No transfers found for this time range.</p>
+                  <div className="card p-12 text-center">
+                    <div className="w-16 h-16 mx-auto mb-6 border-2 border-charcoal flex items-center justify-center">
+                      <span className="text-3xl">?</span>
+                    </div>
+                    <p className="text-text-muted uppercase tracking-wider text-sm">
+                      No transfers found for this time range
+                    </p>
                   </div>
                 )}
               </div>
@@ -257,11 +267,24 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="py-6 px-6 border-t border-border">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-xs text-text-muted">
-            TxGoat
+      <footer className="py-3 px-8 border-t-2 border-charcoal mt-auto">
+        <div className="max-w-5xl mx-auto flex items-center justify-between">
+          <p className="text-[10px] text-text-muted tracking-[0.1em]">
+            made by{' '}
+            <a
+              href="https://x.com/0xgeeb"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-text hover:underline"
+            >
+              geeb
+            </a>
           </p>
+          <div className="flex items-center gap-2">
+            <span className="w-1.5 h-1.5 bg-charcoal" />
+            <span className="w-1.5 h-1.5 bg-charcoal opacity-60" />
+            <span className="w-1.5 h-1.5 bg-charcoal opacity-30" />
+          </div>
         </div>
       </footer>
     </div>

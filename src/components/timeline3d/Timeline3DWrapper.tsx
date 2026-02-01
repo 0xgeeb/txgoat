@@ -8,8 +8,14 @@ const Timeline3DInner = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="w-full h-48 border border-border bg-cream-dark flex items-center justify-center">
-        <span className="text-text-muted text-sm">Loading timeline...</span>
+      <div className="w-full h-48 border-2 border-charcoal bg-cream-dark flex items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid opacity-30" />
+        <div className="flex flex-col items-center gap-3 relative">
+          <div className="w-6 h-6 border-2 border-charcoal border-t-transparent animate-spin" />
+          <span className="text-text-muted text-[10px] uppercase tracking-widest font-mono">
+            Loading Timeline
+          </span>
+        </div>
       </div>
     ),
   }

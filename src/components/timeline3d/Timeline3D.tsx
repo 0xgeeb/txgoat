@@ -72,20 +72,15 @@ export function Timeline3D({
     <div className={cn('relative w-full', className)}>
       {/* Info bar */}
       <div className="flex items-center justify-between mb-4">
-        <span className="text-xs font-mono text-text">
+        <span className="text-xs font-mono text-text uppercase tracking-wider">
           {format(viewState.viewStart, 'MMM yyyy')} — {format(viewState.viewEnd, 'MMM yyyy')}
         </span>
         {isZoomed && (
           <button
             onClick={handleReset}
-            className={cn(
-              'px-3 py-1 text-xs',
-              'bg-cream-dark border border-border',
-              'text-text-muted hover:text-text hover:border-border-dark',
-              'transition-colors duration-150'
-            )}
+            className="btn-secondary text-[10px] px-2 py-1"
           >
-            Reset
+            Reset View
           </button>
         )}
       </div>
@@ -93,11 +88,14 @@ export function Timeline3D({
       {/* 3D Canvas */}
       <div
         className={cn(
-          'w-full h-[400px] border border-border overflow-hidden',
+          'w-full h-[320px] border-2 border-charcoal overflow-hidden',
           'cursor-crosshair',
-          'bg-gradient-to-b from-cream to-cream-dark'
+          'bg-cream-dark relative'
         )}
       >
+        {/* Grid pattern background */}
+        <div className="absolute inset-0 bg-grid opacity-50 pointer-events-none" />
+
         <Canvas
           camera={{
             position: [0, 0.5, 4.2],
@@ -117,54 +115,50 @@ export function Timeline3D({
       </div>
 
       {/* Date labels below canvas */}
-      <div className="flex justify-between mt-2 px-2">
-        <span className="text-xs font-mono text-text">
+      <div className="flex justify-between mt-3 px-1">
+        <span className="text-xs font-mono text-text uppercase tracking-wider">
           {formatDateForZoom(viewState.viewStart, viewState.zoomLevel)}
         </span>
-        <span className="text-xs font-mono text-text-muted">
-          Drag to select range
+        <span className="text-[10px] font-mono text-text-muted uppercase tracking-widest">
+          Drag to Select
         </span>
-        <span className="text-xs font-mono text-text">
+        <span className="text-xs font-mono text-text uppercase tracking-wider">
           {formatDateForZoom(viewState.viewEnd, viewState.zoomLevel)}
         </span>
       </div>
 
       {/* Selected range display */}
       {selectedRange && (
-        <div className="mt-4 flex items-center justify-center gap-2 text-sm font-mono">
-          <span className="text-text">
-            {selectedRange.start.toLocaleString()}
-          </span>
-          <span className="text-text-muted">→</span>
-          <span className="text-text">
-            {selectedRange.end.toLocaleString()}
-          </span>
-          <button
-            onClick={handleZoomIn}
-            className={cn(
-              'ml-4 px-3 py-1 text-xs',
-              'bg-charcoal border border-charcoal',
-              'text-cream hover:bg-charcoal-light',
-              'transition-colors duration-150'
-            )}
-          >
-            Zoom In
-          </button>
-          <button
-            onClick={() => {
-              setSelectedRange(null);
-              setClearTrigger(t => t + 1);
-              onSelectionChange?.(null);
-            }}
-            className={cn(
-              'px-2 py-1 text-xs',
-              'bg-cream-dark border border-border',
-              'text-text-muted hover:text-text hover:border-border-dark',
-              'transition-colors duration-150'
-            )}
-          >
-            Clear
-          </button>
+        <div className="mt-3 p-3 border-2 border-charcoal bg-cream">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div className="flex items-center gap-2 text-xs font-mono">
+              <span className="text-text font-medium">
+                {selectedRange.start.toLocaleDateString()}
+              </span>
+              <span className="text-text-muted">&rarr;</span>
+              <span className="text-text font-medium">
+                {selectedRange.end.toLocaleDateString()}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={handleZoomIn}
+                className="btn text-[10px] px-2 py-1"
+              >
+                Zoom
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedRange(null);
+                  setClearTrigger(t => t + 1);
+                  onSelectionChange?.(null);
+                }}
+                className="btn-secondary text-[10px] px-2 py-1"
+              >
+                Clear
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
