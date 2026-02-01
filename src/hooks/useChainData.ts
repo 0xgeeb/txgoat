@@ -40,7 +40,12 @@ export function useChainData() {
 
     const step = 2000
 
-    const getBlock = async (selectedRange: TimeRange | null, walletAddress: string, tokenAddress: string) => {
+    const getBlock = async (
+        selectedRange: TimeRange | null,
+        walletAddress: string,
+        tokenAddress: string,
+        onComplete?: (transfers: TokenTransfer[]) => void
+    ) => {
         if (!selectedRange || !walletAddress || !tokenAddress || !client) return
 
         setIsLoading(true)
@@ -124,6 +129,10 @@ export function useChainData() {
                 }
             }
             setProgress(100)
+            // Call onComplete with the found transfers
+            if (onComplete && foundTransfers.length > 0) {
+                onComplete(foundTransfers)
+            }
         } catch (error) {
             console.error('Error fetching transfers:', error)
         } finally {
@@ -131,10 +140,16 @@ export function useChainData() {
         }
     }
 
+    // TODO: Remove - for testing UI
+    const setMockTransfers = (mockData: TokenTransfer[]) => {
+        setTransfers(mockData)
+    }
+
     return {
         getBlock,
         transfers,
         isLoading,
-        progress
+        progress,
+        setMockTransfers
     }
 }

@@ -292,6 +292,22 @@ body {
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: var(--charcoal-light);
   }
+
+  /* Firefox scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--charcoal) var(--cream-dark);
+  }
+
+  /* Hidden scrollbar - still scrollable */
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 /* Animations */

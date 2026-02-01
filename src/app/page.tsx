@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { Timeline3DWrapper, type TimeRange } from '@/components/timeline3d/Timeline3DWrapper';
 import logo from '@/assets/txgoatlogo.png';
@@ -15,19 +15,8 @@ export default function Home() {
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [isRecentSidebarOpen, setIsRecentSidebarOpen] = useState(false);
 
-  const { getBlock, transfers, isLoading, progress } = useChainData()
+  const { getBlock, transfers, isLoading, progress, setMockTransfers } = useChainData()
   const { txs: recentTxs, addTxs, clearTxs } = useRecentTxs();
-
-  // Track loading state to add txs when search completes
-  const wasLoadingRef = useRef(false);
-
-  // Add transfers to recent txs when loading completes
-  useEffect(() => {
-    if (wasLoadingRef.current && !isLoading && transfers.length > 0) {
-      addTxs(transfers);
-    }
-    wasLoadingRef.current = isLoading;
-  }, [isLoading, transfers, addTxs]);
 
   // Default timeline config: 2014 to present (Ethereum launch era to now)
   const config = useMemo(() => ({
@@ -47,23 +36,42 @@ export default function Home() {
     if (!isValidWalletAddress || !isValidTokenAddress || !selectedRange) return;
     setIsSearchMode(true);
     setIsRecentSidebarOpen(false);
-    getBlock(selectedRange, walletAddress, tokenAddress);
+    getBlock(selectedRange, walletAddress, tokenAddress, (completedTransfers) => {
+      addTxs(completedTransfers);
+    });
   };
 
   const handleBackToForm = () => {
     setIsSearchMode(false);
   };
 
+  // TODO: Remove - mock data for testing UI
+  const handleMockSearch = () => {
+    setIsSearchMode(true);
+    const mockTxs = [
+      { txHash: '0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef', blockNumber: BigInt(19000000), from: '0xABC123...', to: '0xDEF456...', amount: '1500.50', direction: 'in' as const, symbol: 'USDC' },
+      { txHash: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890', blockNumber: BigInt(19000100), from: '0xDEF456...', to: '0x789ABC...', amount: '250.00', direction: 'out' as const, symbol: 'USDC' },
+      { txHash: '0x567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234', blockNumber: BigInt(19000200), from: '0x111222...', to: '0xDEF456...', amount: '10000', direction: 'in' as const, symbol: 'USDC' },
+      { txHash: '0x567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234', blockNumber: BigInt(19000200), from: '0x111222...', to: '0xDEF456...', amount: '10000', direction: 'in' as const, symbol: 'USDC' },
+      { txHash: '0x567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234', blockNumber: BigInt(19000200), from: '0x111222...', to: '0xDEF456...', amount: '10000', direction: 'in' as const, symbol: 'USDC' },
+      { txHash: '0x567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234', blockNumber: BigInt(19000200), from: '0x111222...', to: '0xDEF456...', amount: '10000', direction: 'in' as const, symbol: 'USDC' },
+      { txHash: '0x567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234', blockNumber: BigInt(19000200), from: '0x111222...', to: '0xDEF456...', amount: '10000', direction: 'in' as const, symbol: 'USDC' },
+      { txHash: '0x567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234', blockNumber: BigInt(19000200), from: '0x111222...', to: '0xDEF456...', amount: '10000', direction: 'in' as const, symbol: 'USDC' },
+    ];
+    setMockTransfers(mockTxs);
+    addTxs(mockTxs);
+  };
+
   const canSearch = isValidWalletAddress && isValidTokenAddress && selectedRange;
 
   return (
-    <div className="min-h-screen flex flex-col relative noise-overlay">
+    <div className={`min-h-screen flex flex-col relative noise-overlay ${isSearchMode ? 'h-screen overflow-hidden' : ''}`}>
       {/* Decorative corner element */}
-      <div className="fixed top-0 right-0 w-32 h-32 bg-charcoal clip-path-triangle pointer-events-none"
+      <div className={`fixed top-0 right-0 bg-charcoal pointer-events-none transition-all duration-500 ${isSearchMode ? 'w-12 h-12' : 'w-32 h-32'}`}
            style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%)' }} />
 
       {/* Header */}
-      <header className={`h-32 px-8 flex items-center transition-all duration-500 ${isSearchMode ? 'h-16' : ''}`}>
+      <header className={`h-32 px-8 flex items-center transition-all duration-500 ${isSearchMode ? 'h-24' : ''}`}>
         <div className={`transition-all duration-500 w-full ${isSearchMode ? 'max-w-full' : 'max-w-5xl mx-auto text-center'}`}>
           <div className={`flex items-center gap-4 transition-all duration-500 ${isSearchMode ? 'justify-start' : 'justify-center'}`}>
             <Image
@@ -87,7 +95,7 @@ export default function Home() {
       </header>
 
       {/* Divider - aligns with bottom of corner triangle */}
-      <div className="divider" />
+      <div className="border-b-2 border-charcoal" />
 
       {/* Main Content */}
       <main className="flex-1 px-8 py-6">
@@ -165,7 +173,7 @@ export default function Home() {
                     Scanning
                   </span>
                 ) : (
-                  'Search Transfers'
+                  'Search Transactions'
                 )}
               </button>
 
@@ -208,7 +216,7 @@ export default function Home() {
                         />
                       </div>
                       <p className="text-xs text-text-muted mt-4 uppercase tracking-wider">
-                        {transfers.length} transfer{transfers.length !== 1 ? 's' : ''} found
+                        {transfers.length} transction{transfers.length !== 1 ? 's' : ''} found
                       </p>
                     </div>
                   </div>
@@ -219,7 +227,7 @@ export default function Home() {
                   <div className="card p-6">
                     <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-charcoal">
                       <h2 className="font-display italic text-3xl text-text">
-                        Transfers
+                        Transactions
                       </h2>
                       <div className="bg-charcoal text-cream px-4 py-2">
                         <span className="text-sm font-mono">{transfers.length}</span>
@@ -288,7 +296,7 @@ export default function Home() {
                       <span className="text-3xl">?</span>
                     </div>
                     <p className="text-text-muted uppercase tracking-wider text-sm">
-                      No transfers found for this time range
+                      No transactions found for this time range
                     </p>
                   </div>
                 )}
@@ -311,7 +319,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-3 px-8 border-t-2 border-charcoal mt-auto">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <p className="text-[10px] text-text-muted tracking-[0.1em]">
+          <p className="text-[10px] text-text-muted tracking-[0.1em]" onClick={handleMockSearch}>
             made by{' '}
             <a
               href="https://x.com/0xgeeb"
