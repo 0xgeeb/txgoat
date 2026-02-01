@@ -1,18 +1,33 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Timeline3DWrapper, type TimeRange } from '@/components/timeline3d/Timeline3DWrapper';
 import logo from '@/assets/txgoatlogo.png';
 import { useChainData } from "../hooks/useChainData"
+import { useRecentTxs } from '@/hooks/useRecentTxs';
+import { RecentTxsSidebar, RecentTxsInline } from '@/components/RecentTxs';
 
 export default function Home() {
   const [walletAddress, setWalletAddress] = useState('');
   const [tokenAddress, setTokenAddress] = useState('');
   const [selectedRange, setSelectedRange] = useState<TimeRange | null>(null);
   const [isSearchMode, setIsSearchMode] = useState(false);
+  const [isRecentSidebarOpen, setIsRecentSidebarOpen] = useState(false);
 
   const { getBlock, transfers, isLoading, progress } = useChainData()
+  const { txs: recentTxs, addTxs, removeTx, clearTxs } = useRecentTxs();
+
+  // Track loading state to add txs when search completes
+  const wasLoadingRef = useRef(false);
+
+  // Add transfers to recent txs when loading completes
+  useEffect(() => {
+    if (wasLoadingRef.current && !isLoading && transfers.length > 0) {
+      addTxs(transfers);
+    }
+    wasLoadingRef.current = isLoading;
+  }, [isLoading, transfers, addTxs]);
 
   // Default timeline config: 2014 to present (Ethereum launch era to now)
   const config = useMemo(() => ({
@@ -31,6 +46,7 @@ export default function Home() {
   const handleSearch = () => {
     if (!isValidWalletAddress || !isValidTokenAddress || !selectedRange) return;
     setIsSearchMode(true);
+    setIsRecentSidebarOpen(false);
     getBlock(selectedRange, walletAddress, tokenAddress);
   };
 
@@ -161,6 +177,15 @@ export default function Home() {
                   <span className="mr-2">&larr;</span> Back to Full View
                 </button>
               )}
+
+              {/* Recent Txs - inline in search mode */}
+              {isSearchMode && recentTxs.length > 0 && (
+                <RecentTxsInline
+                  txs={recentTxs}
+                  onRemove={removeTx}
+                  onClear={clearTxs}
+                />
+              )}
             </div>
           </div>
 
@@ -265,6 +290,17 @@ export default function Home() {
           </div>
         </div>
       </main>
+
+      {/* Recent Txs Sidebar - only in main view (not search mode) */}
+      {!isSearchMode && (
+        <RecentTxsSidebar
+          txs={recentTxs}
+          onRemove={removeTx}
+          onClear={clearTxs}
+          isOpen={isRecentSidebarOpen}
+          onToggle={() => setIsRecentSidebarOpen(!isRecentSidebarOpen)}
+        />
+      )}
 
       {/* Footer */}
       <footer className="py-3 px-8 border-t-2 border-charcoal mt-auto">

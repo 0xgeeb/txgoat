@@ -37,3 +37,6 @@ Ethereum token transfer explorer with an interactive 3D timeline for date range 
 ## Environment Variables
 - `NEXT_PUBLIC_ETHERSCAN_API_KEY`
 - `NEXT_PUBLIC_MAINNET_RPC`
+
+## Development Workflow
+- After running `npm run build` to verify changes, do NOT run `npm run dev` - the user prefers to run the dev server in a separate terminal.
