@@ -10,6 +10,7 @@ export interface RecentTx {
   to: string;
   amount: string;
   direction: 'in' | 'out';
+  symbol: string;
   timestamp: number; // when it was added to recent
 }
 
@@ -53,6 +54,7 @@ export function useRecentTxs() {
       to: string;
       amount: string;
       direction: 'in' | 'out';
+      symbol: string;
     }>
   ) => {
     const timestamp = Date.now();
@@ -67,6 +69,7 @@ export function useRecentTxs() {
         to: t.to,
         amount: t.amount,
         direction: t.direction,
+        symbol: t.symbol,
         timestamp,
       }));
 

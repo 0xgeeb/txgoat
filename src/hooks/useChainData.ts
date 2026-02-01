@@ -11,6 +11,7 @@ export interface TokenTransfer {
     to: string
     amount: string
     direction: 'in' | 'out'
+    symbol: string
 }
 
 export function useChainData() {
@@ -62,14 +63,22 @@ export function useChainData() {
             const endBlock = Number(responseEnd.result)
             const totalBlocks = endBlock - startBlock
 
-            // Fetch token decimals
-            const decimalsResult = await client.readContract({
-                address: tokenAddress as `0x${string}`,
-                abi: [{ type: 'function', name: 'decimals', inputs: [], outputs: [{ type: 'uint8' }] }],
-                functionName: 'decimals'
-            })
+            // Fetch token decimals and symbol
+            const [decimalsResult, symbolResult] = await Promise.all([
+                client.readContract({
+                    address: tokenAddress as `0x${string}`,
+                    abi: [{ type: 'function', name: 'decimals', inputs: [], outputs: [{ type: 'uint8' }] }],
+                    functionName: 'decimals'
+                }),
+                client.readContract({
+                    address: tokenAddress as `0x${string}`,
+                    abi: [{ type: 'function', name: 'symbol', inputs: [], outputs: [{ type: 'string' }] }],
+                    functionName: 'symbol'
+                })
+            ])
             const decimals = Number(decimalsResult)
-            console.log(`Token decimals: ${decimals}`)
+            const symbol = symbolResult as string
+            console.log(`Token: ${symbol}, decimals: ${decimals}`)
 
             const walletLower = walletAddress.toLowerCase()
 
@@ -105,7 +114,8 @@ export function useChainData() {
                             from: log.args.from as string,
                             to: log.args.to as string,
                             amount: formatUnits(log.args.value as bigint, decimals),
-                            direction: logFrom === walletLower ? 'out' : 'in'
+                            direction: logFrom === walletLower ? 'out' : 'in',
+                            symbol
                         }
                         console.log('Formatted transfer:', transfer)
                         foundTransfers.push(transfer)

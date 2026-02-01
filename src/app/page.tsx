@@ -16,7 +16,7 @@ export default function Home() {
   const [isRecentSidebarOpen, setIsRecentSidebarOpen] = useState(false);
 
   const { getBlock, transfers, isLoading, progress } = useChainData()
-  const { txs: recentTxs, addTxs, removeTx, clearTxs } = useRecentTxs();
+  const { txs: recentTxs, addTxs, clearTxs } = useRecentTxs();
 
   // Track loading state to add txs when search completes
   const wasLoadingRef = useRef(false);
@@ -79,7 +79,8 @@ export default function Home() {
           </div>
           {!isSearchMode && (
             <p className="text-text-muted text-[10px] uppercase tracking-[0.2em] mt-2">
-              Ethereum Token Transfer Explorer
+              {/* Ethereum Token Transfer Explorer */}
+              EVM Blockchain Transaction Search
             </p>
           )}
         </div>
@@ -92,7 +93,7 @@ export default function Home() {
       <main className="flex-1 px-8 py-6">
         <div className={`flex transition-all duration-500 ${isSearchMode ? 'gap-8' : 'max-w-5xl mx-auto'}`}>
           {/* Form Section - becomes sidebar in search mode */}
-          <div className={`transition-all duration-500 ease-in-out ${isSearchMode ? 'w-96 flex-shrink-0 min-w-0 overflow-hidden' : 'w-full'}`}>
+          <div className={`transition-all duration-500 ease-in-out ${isSearchMode ? 'w-96 flex-shrink-0 min-w-0 max-h-[calc(100vh-140px)] overflow-y-auto custom-scrollbar pr-3 pb-6' : 'w-full'}`}>
             <div className="space-y-4 min-w-0">
               {/* Address Input Section */}
               <div className="card-accent p-5 space-y-4 min-w-0 overflow-hidden">
@@ -182,7 +183,6 @@ export default function Home() {
               {isSearchMode && recentTxs.length > 0 && (
                 <RecentTxsInline
                   txs={recentTxs}
-                  onRemove={removeTx}
                   onClear={clearTxs}
                 />
               )}
@@ -245,11 +245,18 @@ export default function Home() {
                               </span>
                             </div>
                           </div>
-                          <div className="mb-4">
-                            <span className="label block mb-1">Amount</span>
-                            <span className="text-2xl font-display italic text-text">
-                              {Number(transfer.amount).toLocaleString()}
-                            </span>
+                          <div className="mb-4 p-4 bg-cream-dark border-2 border-charcoal">
+                            <div className="flex items-center gap-3">
+                              <span className="text-2xl" title="Token Transfer">⇄</span>
+                              <div>
+                                <span className="text-3xl font-display italic text-text">
+                                  {Number(transfer.amount).toLocaleString()}
+                                </span>
+                                <span className="ml-2 text-lg font-mono text-text">
+                                  {transfer.symbol}
+                                </span>
+                              </div>
+                            </div>
                           </div>
                           <div className="mb-4">
                             <span className="label block mb-1">
@@ -295,7 +302,6 @@ export default function Home() {
       {!isSearchMode && (
         <RecentTxsSidebar
           txs={recentTxs}
-          onRemove={removeTx}
           onClear={clearTxs}
           isOpen={isRecentSidebarOpen}
           onToggle={() => setIsRecentSidebarOpen(!isRecentSidebarOpen)}

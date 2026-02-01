@@ -1,20 +1,14 @@
 'use client';
 
-import { useState } from 'react';
 import type { RecentTx } from '@/hooks/useRecentTxs';
 
 interface RecentTxsProps {
   txs: RecentTx[];
-  onRemove: (id: string) => void;
   onClear: () => void;
 }
 
 function formatAddress(address: string): string {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
-}
-
-function formatTxHash(hash: string): string {
-  return `${hash.slice(0, 10)}...${hash.slice(-6)}`;
 }
 
 function formatRelativeTime(timestamp: number): string {
@@ -31,54 +25,39 @@ function formatRelativeTime(timestamp: number): string {
   return new Date(timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
+function formatTxHash(hash: string): string {
+  return `${hash.slice(0, 10)}...${hash.slice(-8)}`;
+}
+
 function TxItem({
   tx,
-  onRemove,
   compact = false
 }: {
   tx: RecentTx;
-  onRemove: () => void;
   compact?: boolean;
 }) {
   return (
     <div
       className={`
-        group relative bg-cream border-2 border-charcoal
+        bg-cream border-2 border-charcoal
         ${compact ? 'p-3' : 'p-4'}
       `}
     >
-      {/* Delete button */}
-      <button
-        onClick={onRemove}
-        className="absolute top-2 right-2 w-5 h-5 flex items-center justify-center
-                   opacity-0 group-hover:opacity-100 transition-opacity
-                   bg-charcoal text-cream hover:bg-danger text-xs font-bold"
-        aria-label="Remove tx"
-      >
-        ×
-      </button>
 
-      {/* Direction badge + Amount */}
-      <div className="flex items-center gap-2 mb-2">
-        <span className={tx.direction === 'in' ? 'badge-in' : 'badge-out'}>
-          {tx.direction === 'in' ? 'In' : 'Out'}
-        </span>
-        <span className={`font-display italic text-text ${compact ? 'text-base' : 'text-lg'}`}>
-          {Number(tx.amount).toLocaleString()}
-        </span>
-      </div>
-
-      {/* Tx Hash */}
-      <div className={compact ? 'mb-2' : 'mb-3'}>
-        <span className="label block mb-1">Tx</span>
-        <a
-          href={`https://etherscan.io/tx/${tx.txHash}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`font-mono text-text hover:underline ${compact ? 'text-[10px]' : 'text-xs'}`}
-        >
-          {formatTxHash(tx.txHash)}
-        </a>
+      {/* Amount + Symbol - prominent */}
+      <div className={`${compact ? 'p-2 mb-2' : 'p-3 mb-3'} bg-cream-dark border-2 border-charcoal`}>
+        <div className="flex items-center gap-2">
+          <span className={compact ? 'text-base' : 'text-lg'} title="Token Transfer">⇄</span>
+          <span className={tx.direction === 'in' ? 'badge-in' : 'badge-out'}>
+            {tx.direction === 'in' ? 'In' : 'Out'}
+          </span>
+          <span className={`font-display italic text-text ${compact ? 'text-lg' : 'text-xl'}`}>
+            {Number(tx.amount).toLocaleString()}
+          </span>
+          <span className={`font-mono text-text ${compact ? 'text-xs' : 'text-sm'}`}>
+            {tx.symbol}
+          </span>
+        </div>
       </div>
 
       {/* From/To based on direction */}
@@ -96,22 +75,37 @@ function TxItem({
         </a>
       </div>
 
-      {/* Footer */}
-      <div className="flex items-center justify-between pt-2 border-t border-charcoal/20">
+      {/* Footer with block info and tx hash */}
+      <div className="flex items-center justify-between mb-3">
         <span className="text-[10px] text-text-muted uppercase tracking-wider">
           {formatRelativeTime(tx.timestamp)}
         </span>
-        <span className="text-[10px] text-text-muted font-mono">
-          #{tx.blockNumber.toLocaleString()}
-        </span>
+        <div className="text-right">
+          <span className="text-[10px] text-text-muted font-mono block">
+            Block #{tx.blockNumber.toLocaleString()}
+          </span>
+          <span className="text-[10px] text-text-muted font-mono">
+            {formatTxHash(tx.txHash)}
+          </span>
+        </div>
       </div>
+
+      {/* View on Etherscan button */}
+      <a
+        href={`https://etherscan.io/tx/${tx.txHash}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`inline-flex items-center gap-2 uppercase tracking-wider bg-charcoal text-cream hover:bg-cream hover:text-charcoal border-2 border-charcoal transition-colors w-full justify-center ${compact ? 'text-[10px] px-2 py-1.5' : 'text-xs px-3 py-2'}`}
+      >
+        View on Etherscan
+        <span>&rarr;</span>
+      </a>
     </div>
   );
 }
 
 export function RecentTxsSidebar({
   txs,
-  onRemove,
   onClear,
   isOpen,
   onToggle,
@@ -191,10 +185,7 @@ export function RecentTxsSidebar({
                   className="animate-slide-in"
                   style={{ animationDelay: `${index * 0.05}s` }}
                 >
-                  <TxItem
-                    tx={tx}
-                    onRemove={() => onRemove(tx.id)}
-                  />
+                  <TxItem tx={tx} />
                 </div>
               ))}
             </div>
@@ -221,66 +212,39 @@ export function RecentTxsSidebar({
 
 export function RecentTxsInline({
   txs,
-  onRemove,
   onClear,
 }: RecentTxsProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
-
   if (txs.length === 0) {
     return null;
   }
 
   return (
-    <div className="card-accent overflow-hidden">
+    <div>
       {/* Header */}
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full p-4 flex items-center justify-between bg-cream hover:bg-cream-dark transition-colors"
-      >
+      <div className="flex items-center justify-between mb-4 pb-3 border-b-2 border-charcoal">
         <div className="flex items-center gap-3">
-          <span className="font-display italic text-lg text-text">Recent Txs</span>
+          <span className="font-display italic text-xl text-text">Recent Txs</span>
           <span className="bg-charcoal text-cream px-2 py-0.5 text-[10px] font-mono">
             {txs.length}
           </span>
         </div>
-        <div className="flex items-center gap-3">
-          {txs.length > 0 && (
-            <span
-              onClick={(e) => {
-                e.stopPropagation();
-                onClear();
-              }}
-              className="text-[10px] uppercase tracking-wider text-text-muted hover:text-danger transition-colors cursor-pointer"
-            >
-              Clear
-            </span>
-          )}
-          <span
-            className={`text-charcoal transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
-          >
-            ▼
-          </span>
-        </div>
-      </button>
+        <button
+          onClick={onClear}
+          className="text-[10px] uppercase tracking-wider text-text-muted hover:text-danger transition-colors"
+        >
+          Clear
+        </button>
+      </div>
 
-      {/* Expandable content */}
-      <div
-        className={`
-          transition-all duration-300 ease-out overflow-hidden
-          ${isExpanded ? 'max-h-64 opacity-100' : 'max-h-0 opacity-0'}
-        `}
-      >
-        <div className="border-t-2 border-charcoal" />
-        <div className="p-3 max-h-56 overflow-y-auto custom-scrollbar space-y-2 bg-cream-dark/50">
-          {txs.map((tx) => (
-            <TxItem
-              key={tx.id}
-              tx={tx}
-              onRemove={() => onRemove(tx.id)}
-              compact
-            />
-          ))}
-        </div>
+      {/* Tx list - no separate scroll, flows with sidebar */}
+      <div className="space-y-3">
+        {txs.map((tx) => (
+          <TxItem
+            key={tx.id}
+            tx={tx}
+            compact
+          />
+        ))}
       </div>
     </div>
   );
