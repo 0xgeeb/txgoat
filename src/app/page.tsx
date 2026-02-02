@@ -47,6 +47,10 @@ export default function Home() {
     if (!isValidWalletAddress || !isValidTokenAddress || !selectedRange || isRangeTooLong) return;
     setEnsError(null);
 
+    // Transition UI immediately
+    setIsSearchMode(true);
+    setIsRecentSidebarOpen(false);
+
     let resolvedWallet = walletAddress;
     if (isEnsName(walletAddress)) {
       const resolved = await resolveEns(walletAddress);
@@ -57,8 +61,6 @@ export default function Home() {
       resolvedWallet = resolved;
     }
 
-    setIsSearchMode(true);
-    setIsRecentSidebarOpen(false);
     getBlock(selectedRange, resolvedWallet, tokenAddress, (completedTransfers) => {
       addTxs(completedTransfers);
     });
