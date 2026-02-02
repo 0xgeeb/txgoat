@@ -20,9 +20,9 @@ export default function Home() {
   const [ensError, setEnsError] = useState<string | null>(null);
   const { txs: recentTxs, addTxs, clearTxs } = useRecentTxs();
 
-  // Default timeline config: 2014 to present (Ethereum launch era to now)
+  // Default timeline config: Ethereum genesis (2015-07-30) to present
   const config = useMemo(() => ({
-    minDate: new Date('2014-01-01'),
+    minDate: new Date('2015-07-30'),
     maxDate: new Date(),
     minSelectionMs: 60 * 60 * 1000, // Minimum 1 hour selection
     maxSelectionMs: 60 * 24 * 60 * 60 * 1000, // Maximum 2 month selection
