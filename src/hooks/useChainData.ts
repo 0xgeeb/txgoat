@@ -1,9 +1,7 @@
 'use client';
 
-import { useState, useMemo, useCallback } from 'react'
-import { createPublicClient, http, parseAbiItem, formatUnits, type PublicClient } from 'viem'
-import { mainnet } from 'viem/chains'
-import { normalize } from 'viem/ens'
+import { useState, useCallback } from 'react'
+import { formatUnits } from 'viem'
 import { TimeRange } from '@/types/timeline'
 
 export interface TokenTransfer {
@@ -21,18 +19,6 @@ export function useChainData() {
     const [isLoading, setIsLoading] = useState(false)
     const [progress, setProgress] = useState(0)
 
-    const etherscanApiKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY ?? ''
-    const rpc = process.env.NEXT_PUBLIC_MAINNET_RPC ?? ''
-
-    const client = useMemo<PublicClient | null>(() => {
-        if (!rpc) return null
-
-        return createPublicClient({
-            chain: mainnet,
-            transport: http(rpc)
-        })
-    }, [rpc])
-
     const step = 2000
 
     const getBlock = async (
@@ -41,7 +27,7 @@ export function useChainData() {
         tokenAddress: string,
         onComplete?: (transfers: TokenTransfer[]) => void
     ) => {
-        if (!selectedRange || !walletAddress || !tokenAddress || !client) return
+        if (!selectedRange || !walletAddress || !tokenAddress) return
 
         setIsLoading(true)
         setTransfers([])
@@ -54,8 +40,10 @@ export function useChainData() {
 
             console.log('Finding block range...')
 
-            const respStart = await fetch(`https://api.etherscan.io/v2/api?chainid=1&module=block&action=getblocknobytime&timestamp=${startTimestamp}&closest=before&apikey=${etherscanApiKey}`)
-            const respEnd = await fetch(`https://api.etherscan.io/v2/api?chainid=1&module=block&action=getblocknobytime&timestamp=${endTimestamp}&closest=before&apikey=${etherscanApiKey}`)
+            const [respStart, respEnd] = await Promise.all([
+                fetch(`/api/block-by-time?timestamp=${startTimestamp}&closest=before`),
+                fetch(`/api/block-by-time?timestamp=${endTimestamp}&closest=before`)
+            ])
             const responseStart = await respStart.json()
             const responseEnd = await respEnd.json()
 
@@ -64,20 +52,14 @@ export function useChainData() {
             const totalBlocks = endBlock - startBlock
 
             // Fetch token decimals and symbol
-            const [decimalsResult, symbolResult] = await Promise.all([
-                client.readContract({
-                    address: tokenAddress as `0x${string}`,
-                    abi: [{ type: 'function', name: 'decimals', inputs: [], outputs: [{ type: 'uint8' }] }],
-                    functionName: 'decimals'
-                }),
-                client.readContract({
-                    address: tokenAddress as `0x${string}`,
-                    abi: [{ type: 'function', name: 'symbol', inputs: [], outputs: [{ type: 'string' }] }],
-                    functionName: 'symbol'
-                })
-            ])
-            const decimals = Number(decimalsResult)
-            const symbol = symbolResult as string
+            const tokenInfoResp = await fetch(`/api/token-info?address=${tokenAddress}`)
+            const tokenInfo = await tokenInfoResp.json()
+
+            if (tokenInfo.error) {
+                throw new Error(tokenInfo.error)
+            }
+
+            const { decimals, symbol } = tokenInfo
             console.log(`Token: ${symbol}, decimals: ${decimals}`)
 
             const walletLower = walletAddress.toLowerCase()
@@ -88,14 +70,14 @@ export function useChainData() {
                 setProgress(progressPct)
                 console.log(`Scanning blocks ${from.toLocaleString()} - ${to.toLocaleString()} (${progressPct}%)`)
 
-                const blockLogs = await client.getLogs({
-                    address: tokenAddress as `0x${string}`,
-                    event: parseAbiItem('event Transfer(address indexed from, address indexed to, uint256 value)'),
-                    fromBlock: BigInt(from),
-                    toBlock: BigInt(to)
-                })
+                const logsResp = await fetch(`/api/logs?tokenAddress=${tokenAddress}&fromBlock=${from}&toBlock=${to}`)
+                const logsData = await logsResp.json()
 
-                for (const log of blockLogs) {
+                if (logsData.error) {
+                    throw new Error(logsData.error)
+                }
+
+                for (const log of logsData.logs) {
                     const logFrom = (log.args.from as string).toLowerCase()
                     const logTo = (log.args.to as string).toLowerCase()
 
@@ -106,14 +88,13 @@ export function useChainData() {
                             from: log.args.from,
                             to: log.args.to,
                             rawValue: log.args.value,
-                            rawValueString: log.args.value?.toString(),
                         })
                         const transfer: TokenTransfer = {
                             txHash: log.transactionHash,
-                            blockNumber: log.blockNumber,
+                            blockNumber: BigInt(log.blockNumber),
                             from: log.args.from as string,
                             to: log.args.to as string,
-                            amount: formatUnits(log.args.value as bigint, decimals),
+                            amount: formatUnits(BigInt(log.args.value), decimals),
                             direction: logFrom === walletLower ? 'out' : 'in',
                             symbol
                         }
@@ -141,15 +122,15 @@ export function useChainData() {
     }
 
     const resolveEns = useCallback(async (name: string): Promise<string | null> => {
-        if (!client) return null
         try {
-            const address = await client.getEnsAddress({ name: normalize(name) })
-            return address
+            const resp = await fetch(`/api/ens?name=${encodeURIComponent(name)}`)
+            const data = await resp.json()
+            return data.address
         } catch (error) {
             console.error('ENS resolution failed:', error)
             return null
         }
-    }, [client])
+    }, [])
 
     return {
         getBlock,
