@@ -355,7 +355,8 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-3 px-8 border-t-2 border-charcoal mt-auto">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <p className="text-[10px] text-text-muted tracking-[0.1em]" onClick={handleMockSearch}>
+          {/* <p className="text-[10px] text-text-muted tracking-[0.1em]" onClick={handleMockSearch}> */}
+          <p className="text-[10px] text-text-muted tracking-[0.1em]">
             made by{' '}
             <a
               href="https://x.com/0xgeeb"
