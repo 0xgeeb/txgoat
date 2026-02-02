@@ -209,9 +209,9 @@ export default function Home() {
           </div>
 
           {/* Results Section - only visible in search mode */}
-          <div className={`flex-1 transition-all duration-500 ${isSearchMode ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden'}`}>
+          <div className={`flex-1 transition-all duration-500 ${isSearchMode ? 'opacity-100 max-h-[calc(100vh-140px)]' : 'opacity-0 w-0 overflow-hidden'}`}>
             {isSearchMode && (
-              <div className="space-y-6 animate-fade-in">
+              <div className="h-full flex flex-col animate-fade-in">
                 {/* Progress Bar */}
                 {isLoading && (
                   <div className="flex items-center justify-center min-h-[200px]">
@@ -235,8 +235,8 @@ export default function Home() {
 
                 {/* Transfers List */}
                 {transfers.length > 0 && (
-                  <div className="card p-6">
-                    <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-charcoal">
+                  <div className="card p-6 flex-1 flex flex-col min-h-0">
+                    <div className="flex items-center justify-between mb-6 pb-4 border-b-2 border-charcoal flex-shrink-0">
                       <h2 className="font-display italic text-3xl text-text">
                         Transactions
                       </h2>
@@ -244,7 +244,7 @@ export default function Home() {
                         <span className="text-sm font-mono">{transfers.length}</span>
                       </div>
                     </div>
-                    <div className="space-y-4 max-h-[calc(100vh-350px)] overflow-y-auto custom-scrollbar pr-2">
+                    <div className="space-y-4 overflow-y-auto custom-scrollbar pr-2 flex-1 min-h-0">
                       {transfers.map((transfer, index) => (
                         <div
                           key={`${transfer.txHash}-${index}`}
