@@ -23,6 +23,7 @@ export default function Home() {
     minDate: new Date('2014-01-01'),
     maxDate: new Date(),
     minSelectionMs: 60 * 60 * 1000, // Minimum 1 hour selection
+    maxSelectionMs: 60 * 24 * 60 * 60 * 1000, // Maximum 2 month selection
   }), []);
 
   const handleSelectionChange = (range: TimeRange | null) => {
@@ -32,8 +33,13 @@ export default function Home() {
   const isValidWalletAddress = walletAddress.length === 42 && walletAddress.startsWith('0x');
   const isValidTokenAddress = tokenAddress.length === 42 && tokenAddress.startsWith('0x');
 
+  const selectionMs = selectedRange
+    ? selectedRange.end.getTime() - selectedRange.start.getTime()
+    : 0;
+  const isRangeTooLong = selectionMs > config.maxSelectionMs;
+
   const handleSearch = () => {
-    if (!isValidWalletAddress || !isValidTokenAddress || !selectedRange) return;
+    if (!isValidWalletAddress || !isValidTokenAddress || !selectedRange || isRangeTooLong) return;
     setIsSearchMode(true);
     setIsRecentSidebarOpen(false);
     getBlock(selectedRange, walletAddress, tokenAddress, (completedTransfers) => {
@@ -62,7 +68,7 @@ export default function Home() {
     addTxs(mockTxs);
   };
 
-  const canSearch = isValidWalletAddress && isValidTokenAddress && selectedRange;
+  const canSearch = isValidWalletAddress && isValidTokenAddress && selectedRange && !isRangeTooLong;
 
   return (
     <div className={`min-h-screen flex flex-col relative noise-overlay ${isSearchMode ? 'h-screen overflow-hidden' : ''}`}>
@@ -159,6 +165,11 @@ export default function Home() {
                   config={config}
                   onSelectionChange={handleSelectionChange}
                 />
+                {isRangeTooLong && (
+                  <p className="mt-3 text-xs text-danger font-medium uppercase tracking-wide">
+                    Selection exceeds 2 months
+                  </p>
+                )}
               </div>
 
               {/* Search Button */}

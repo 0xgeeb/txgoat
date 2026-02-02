@@ -12,6 +12,7 @@ export interface TimelineConfig {
   minDate: Date;
   maxDate: Date;
   minSelectionMs?: number;
+  maxSelectionMs?: number;
 }
 
 export type DragTarget = 'start' | 'end' | 'selection' | null;
