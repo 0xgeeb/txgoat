@@ -15,7 +15,8 @@ export default function Home() {
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [isRecentSidebarOpen, setIsRecentSidebarOpen] = useState(false);
 
-  const { getBlock, transfers, isLoading, progress, setMockTransfers } = useChainData()
+  const { getBlock, transfers, isLoading, progress, setMockTransfers, resolveEns } = useChainData()
+  const [ensError, setEnsError] = useState<string | null>(null);
   const { txs: recentTxs, addTxs, clearTxs } = useRecentTxs();
 
   // Default timeline config: 2014 to present (Ethereum launch era to now)
@@ -30,19 +31,34 @@ export default function Home() {
     setSelectedRange(range);
   };
 
-  const isValidWalletAddress = walletAddress.length === 42 && walletAddress.startsWith('0x');
-  const isValidTokenAddress = tokenAddress.length === 42 && tokenAddress.startsWith('0x');
+  const isEthAddress = (addr: string) => addr.length === 42 && addr.startsWith('0x');
+  const isEnsName = (addr: string) => addr.endsWith('.eth') && addr.length > 4;
+
+  const isValidWalletAddress = isEthAddress(walletAddress) || isEnsName(walletAddress);
+  const isValidTokenAddress = isEthAddress(tokenAddress);
 
   const selectionMs = selectedRange
     ? selectedRange.end.getTime() - selectedRange.start.getTime()
     : 0;
   const isRangeTooLong = selectionMs > config.maxSelectionMs;
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     if (!isValidWalletAddress || !isValidTokenAddress || !selectedRange || isRangeTooLong) return;
+    setEnsError(null);
+
+    let resolvedWallet = walletAddress;
+    if (isEnsName(walletAddress)) {
+      const resolved = await resolveEns(walletAddress);
+      if (!resolved) {
+        setEnsError(`Could not resolve ${walletAddress}`);
+        return;
+      }
+      resolvedWallet = resolved;
+    }
+
     setIsSearchMode(true);
     setIsRecentSidebarOpen(false);
-    getBlock(selectedRange, walletAddress, tokenAddress, (completedTransfers) => {
+    getBlock(selectedRange, resolvedWallet, tokenAddress, (completedTransfers) => {
       addTxs(completedTransfers);
     });
   };
@@ -116,21 +132,26 @@ export default function Home() {
                     htmlFor="wallet-address"
                     className="label block mb-2"
                   >
-                    Wallet Address
+                    Wallet Address (or ENS)
                   </label>
                   <input
                     id="wallet-address"
                     type="text"
                     value={walletAddress}
-                    onChange={(e) => setWalletAddress(e.target.value)}
-                    placeholder="0x..."
+                    onChange={(e) => { setWalletAddress(e.target.value); setEnsError(null); }}
+                    placeholder="0x... or name.eth"
                     className="input w-full min-w-0"
                     spellCheck={false}
                     autoComplete="off"
                   />
                   {walletAddress && !isValidWalletAddress && (
-                    <p className="mt-1 text-xs text-danger font-medium uppercase tracking-wide">
-                      Invalid address
+                    <p className="mt-3 text-xs text-danger font-medium uppercase tracking-wide">
+                      Invalid address or ENS name
+                    </p>
+                  )}
+                  {ensError && (
+                    <p className="mt-3 text-xs text-danger font-medium uppercase tracking-wide">
+                      {ensError}
                     </p>
                   )}
                 </div>
@@ -152,7 +173,7 @@ export default function Home() {
                     autoComplete="off"
                   />
                   {tokenAddress && !isValidTokenAddress && (
-                    <p className="mt-1 text-xs text-danger font-medium uppercase tracking-wide">
+                    <p className="mt-3 text-xs text-danger font-medium uppercase tracking-wide">
                       Invalid address
                     </p>
                   )}

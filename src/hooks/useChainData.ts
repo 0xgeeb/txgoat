@@ -1,7 +1,9 @@
 'use client';
 
-import { useState, useMemo } from 'react'
-import { createPublicClient, http, parseAbiItem, formatUnits, type Chain, type PublicClient } from 'viem'
+import { useState, useMemo, useCallback } from 'react'
+import { createPublicClient, http, parseAbiItem, formatUnits, type PublicClient } from 'viem'
+import { mainnet } from 'viem/chains'
+import { normalize } from 'viem/ens'
 import { TimeRange } from '@/types/timeline'
 
 export interface TokenTransfer {
@@ -25,16 +27,9 @@ export function useChainData() {
     const client = useMemo<PublicClient | null>(() => {
         if (!rpc) return null
 
-        const mainnetChain = {
-            id: 1,
-            name: "Mainnet",
-            nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-            rpcUrls: { default: { http: [rpc] }, public: { http: [rpc] } }
-        } as const satisfies Chain
-
         return createPublicClient({
-            chain: mainnetChain,
-            transport: http()
+            chain: mainnet,
+            transport: http(rpc)
         })
     }, [rpc])
 
@@ -145,11 +140,23 @@ export function useChainData() {
         setTransfers(mockData)
     }
 
+    const resolveEns = useCallback(async (name: string): Promise<string | null> => {
+        if (!client) return null
+        try {
+            const address = await client.getEnsAddress({ name: normalize(name) })
+            return address
+        } catch (error) {
+            console.error('ENS resolution failed:', error)
+            return null
+        }
+    }, [client])
+
     return {
         getBlock,
         transfers,
         isLoading,
         progress,
-        setMockTransfers
+        setMockTransfers,
+        resolveEns
     }
 }
