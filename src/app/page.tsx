@@ -15,6 +15,7 @@ export default function Home() {
   const [selectedRange, setSelectedRange] = useState<TimeRange | null>(null);
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [isRecentSidebarOpen, setIsRecentSidebarOpen] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
 
   const { getBlock, transfers, isLoading, progress, setMockTransfers, resolveEns } = useChainData()
   const [ensError, setEnsError] = useState<string | null>(null);
@@ -50,6 +51,7 @@ export default function Home() {
     // Transition UI immediately
     setIsSearchMode(true);
     setIsRecentSidebarOpen(false);
+    setHasSearched(false);
 
     let resolvedWallet = walletAddress;
     if (isEnsName(walletAddress)) {
@@ -61,9 +63,10 @@ export default function Home() {
       resolvedWallet = resolved;
     }
 
-    getBlock(selectedRange, resolvedWallet, tokenAddress, (completedTransfers) => {
+    await getBlock(selectedRange, resolvedWallet, tokenAddress, (completedTransfers) => {
       addTxs(completedTransfers);
     });
+    setHasSearched(true);
   };
 
   const handleBackToForm = () => {
@@ -323,7 +326,7 @@ export default function Home() {
                 )}
 
                 {/* No results state */}
-                {!isLoading && transfers.length === 0 && (
+                {!isLoading && hasSearched && transfers.length === 0 && (
                   <div className="card p-12 text-center">
                     <div className="w-16 h-16 mx-auto mb-6 border-2 border-charcoal flex items-center justify-center">
                       <span className="text-3xl">?</span>
