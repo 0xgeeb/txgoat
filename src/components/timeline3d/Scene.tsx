@@ -19,14 +19,15 @@ interface SceneProps {
   viewState: ViewState;
   onSelectionChange: (range: TimeRange | null) => void;
   clearTrigger: number; // Increment this to clear the selection
+  initialSelection?: { startPercent: number; endPercent: number } | null;
 }
 
-export function Scene({ viewState, onSelectionChange, clearTrigger }: SceneProps) {
+export function Scene({ viewState, onSelectionChange, clearTrigger, initialSelection }: SceneProps) {
   const { camera, gl } = useThree();
 
   // Selection state
   const [isDragging, setIsDragging] = useState(false);
-  const [selection, setSelection] = useState<{ startPercent: number; endPercent: number } | null>(null);
+  const [selection, setSelection] = useState<{ startPercent: number; endPercent: number } | null>(initialSelection ?? null);
   const [hoverPosition, setHoverPosition] = useState<number | null>(null);
   const lastClearTrigger = useRef(clearTrigger);
 

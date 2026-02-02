@@ -95,7 +95,10 @@ export default function Home() {
       {/* Header */}
       <header className={`h-32 px-8 flex items-center transition-all duration-500 ${isSearchMode ? 'h-24' : ''}`}>
         <div className={`transition-all duration-500 w-full ${isSearchMode ? 'max-w-full' : 'max-w-5xl mx-auto text-center'}`}>
-          <div className={`flex items-center gap-4 transition-all duration-500 ${isSearchMode ? 'justify-start' : 'justify-center'}`}>
+          <div
+            onClick={isSearchMode ? handleBackToForm : undefined}
+            className={`flex items-center gap-4 transition-all duration-500 ${isSearchMode ? 'justify-start cursor-pointer' : 'justify-center'}`}
+          >
             <Image
               src={logo}
               alt="TxGoat Logo"
@@ -184,6 +187,7 @@ export default function Home() {
               <div className="card-accent p-5 min-w-0 overflow-hidden">
                 <Timeline3DWrapper
                   config={config}
+                  compact={isSearchMode}
                   onSelectionChange={handleSelectionChange}
                 />
                 {isRangeTooLong && (

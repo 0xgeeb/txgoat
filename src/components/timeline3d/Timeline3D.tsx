@@ -4,19 +4,21 @@ import { useState, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { cn } from '@/lib/utils';
 import { Scene } from './Scene';
-import { getZoomLevel, formatDateForZoom } from './utils';
+import { getZoomLevel, formatDateForZoom, dateToPosition, positionToPercent } from './utils';
 import type { TimeRange, ViewState, Timeline3DConfig } from './types';
 import { format } from 'date-fns';
 
 export interface Timeline3DProps {
   config: Timeline3DConfig;
   className?: string;
+  compact?: boolean;
   onSelectionChange?: (range: TimeRange | null) => void;
 }
 
 export function Timeline3D({
   config,
   className,
+  compact,
   onSelectionChange,
 }: Timeline3DProps) {
   // View state tracks the current zoom level and visible date range
@@ -125,8 +127,9 @@ export function Timeline3D({
         <div className="absolute inset-0 bg-grid opacity-50 pointer-events-none" />
 
         <Canvas
+          key={compact ? 'compact' : 'full'}
           camera={{
-            position: [0, 0.5, 4.2],
+            position: [0, 0.5, compact ? 10 : 4.2],
             fov: 50,
             near: 0.1,
             far: 100,
@@ -138,6 +141,10 @@ export function Timeline3D({
             viewState={viewState}
             onSelectionChange={handleSelectionChange}
             clearTrigger={clearTrigger}
+            initialSelection={selectedRange ? {
+              startPercent: positionToPercent(dateToPosition(selectedRange.start, viewState.viewStart, viewState.viewEnd)),
+              endPercent: positionToPercent(dateToPosition(selectedRange.end, viewState.viewStart, viewState.viewEnd)),
+            } : null}
           />
         </Canvas>
       </div>

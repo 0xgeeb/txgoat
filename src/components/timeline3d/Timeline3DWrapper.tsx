@@ -33,6 +33,7 @@ export interface Timeline3DWrapperProps {
     minSelectionMs?: number;
   };
   className?: string;
+  compact?: boolean;
   onSelectionChange?: (range: TimeRange | null) => void;
 }
 
