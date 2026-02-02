@@ -79,22 +79,10 @@ export function generateMarkers(
   return markers;
 }
 
-// Format date for tooltip based on zoom level
+// Format date for tooltip
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function formatDateForZoom(date: Date, zoomLevel: ZoomLevel): string {
-  switch (zoomLevel) {
-    case 'years':
-      return format(date, 'MMM yyyy');
-    case 'months':
-      return format(date, 'MMM yyyy');
-    case 'weeks':
-      return format(date, 'MMM d, yyyy');
-    case 'days':
-      return format(date, 'MMM d, yyyy');
-    case 'hours':
-      return format(date, 'MMM d, HH:mm');
-    default:
-      return format(date, 'MMM d, yyyy');
-  }
+  return format(date, 'MMMM d, yyyy');
 }
 
 // Get label for zoom level

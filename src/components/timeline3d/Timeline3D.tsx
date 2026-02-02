@@ -26,6 +26,9 @@ export function Timeline3D({
     viewEnd: config.maxDate,
   }));
 
+  // History of view states for back navigation
+  const [viewHistory, setViewHistory] = useState<ViewState[]>([]);
+
   // Track if we're zoomed in
   const isZoomed = viewState.viewStart.getTime() !== config.minDate.getTime() ||
     viewState.viewEnd.getTime() !== config.maxDate.getTime();
@@ -45,6 +48,7 @@ export function Timeline3D({
   // Zoom into selection
   const handleZoomIn = useCallback(() => {
     if (selectedRange) {
+      setViewHistory(h => [...h, viewState]);
       setViewState({
         zoomLevel: getZoomLevel(selectedRange.start, selectedRange.end),
         viewStart: selectedRange.start,
@@ -54,10 +58,24 @@ export function Timeline3D({
       setClearTrigger(t => t + 1);
       onSelectionChange?.(null);
     }
-  }, [selectedRange, onSelectionChange]);
+  }, [selectedRange, onSelectionChange, viewState]);
+
+  // Go back one zoom level
+  const handleBack = useCallback(() => {
+    if (viewHistory.length > 0) {
+      const newHistory = [...viewHistory];
+      const previousView = newHistory.pop()!;
+      setViewHistory(newHistory);
+      setViewState(previousView);
+      setSelectedRange(null);
+      setClearTrigger(t => t + 1);
+      onSelectionChange?.(null);
+    }
+  }, [viewHistory, onSelectionChange]);
 
   // Reset to full range
   const handleReset = useCallback(() => {
+    setViewHistory([]);
     setViewState({
       zoomLevel: getZoomLevel(config.minDate, config.maxDate),
       viewStart: config.minDate,
@@ -76,12 +94,22 @@ export function Timeline3D({
           {format(viewState.viewStart, 'MMM yyyy')} — {format(viewState.viewEnd, 'MMM yyyy')}
         </span>
         {isZoomed && (
-          <button
-            onClick={handleReset}
-            className="btn-secondary text-[10px] px-2 py-1"
-          >
-            Reset View
-          </button>
+          <div className="flex gap-2">
+            {viewHistory.length > 0 && (
+              <button
+                onClick={handleBack}
+                className="btn-secondary text-[10px] px-2 py-1"
+              >
+                Back
+              </button>
+            )}
+            <button
+              onClick={handleReset}
+              className="btn-secondary text-[10px] px-2 py-1"
+            >
+              Reset
+            </button>
+          </div>
         )}
       </div>
 

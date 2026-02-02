@@ -136,6 +136,13 @@ export function Scene({ viewState, onSelectionChange, clearTrigger }: SceneProps
     ? positionToDate(hoverPosition, viewState.viewStart, viewState.viewEnd)
     : null;
 
+  // Check if hovering over raised bars (within selection) or dragging
+  const hoverPercent = hoverPosition !== null ? positionToPercent(hoverPosition) : null;
+  const isOverRaisedBars = isDragging || (selection && hoverPercent !== null &&
+    hoverPercent >= Math.min(selection.startPercent, selection.endPercent) &&
+    hoverPercent <= Math.max(selection.startPercent, selection.endPercent));
+  const tooltipY = isOverRaisedBars ? 0.9 : 0.5;
+
   // Calculate blade width - touching with tiny gap for edge visibility
   const bladeWidth = (ROD_LENGTH / markers.length) * 0.98;
 
@@ -170,9 +177,9 @@ export function Scene({ viewState, onSelectionChange, clearTrigger }: SceneProps
       ))}
 
       {/* Tooltip */}
-      {hoverDate && hoverPosition !== null && !isDragging && (
+      {hoverDate && hoverPosition !== null && (
         <Tooltip3D
-          position={[hoverPosition, 0.5, 0]}
+          position={[hoverPosition, tooltipY, 0]}
           visible={true}
           dateLabel={formatDateForZoom(hoverDate, viewState.zoomLevel)}
         />

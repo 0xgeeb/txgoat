@@ -16,12 +16,11 @@ export function Tooltip3D({ position, visible, dateLabel, secondaryLabel }: Tool
   return (
     <Html
       position={position}
-      center
       style={{
         pointerEvents: 'none',
         opacity: visible ? 1 : 0,
-        transition: 'opacity 0.2s ease-out, transform 0.2s ease-out',
-        transform: visible ? 'translateY(0)' : 'translateY(4px)',
+        transition: 'opacity 0.2s ease-out',
+        transform: 'translateX(-50%)',
       }}
     >
       <div
