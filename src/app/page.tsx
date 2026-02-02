@@ -247,7 +247,7 @@ export default function Home() {
                         />
                       </div>
                       <p className="text-xs text-text-muted mt-4 uppercase tracking-wider">
-                        {transfers.length} transction{transfers.length !== 1 ? 's' : ''} found
+                        {transfers.length} transaction{transfers.length !== 1 ? 's' : ''} found
                       </p>
                     </div>
                   </div>
