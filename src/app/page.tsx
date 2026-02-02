@@ -7,6 +7,7 @@ import logo from '@/assets/txgoatlogo.png';
 import { useChainData } from "../hooks/useChainData"
 import { useRecentTxs } from '@/hooks/useRecentTxs';
 import { RecentTxsSidebar, RecentTxsInline } from '@/components/RecentTxs';
+import { TokenSelector } from '@/components/TokenSelector';
 
 export default function Home() {
   const [walletAddress, setWalletAddress] = useState('');
@@ -165,15 +166,9 @@ export default function Home() {
                   >
                     Token Address
                   </label>
-                  <input
-                    id="token-address"
-                    type="text"
+                  <TokenSelector
                     value={tokenAddress}
-                    onChange={(e) => setTokenAddress(e.target.value)}
-                    placeholder="0x..."
-                    className="input w-full min-w-0"
-                    spellCheck={false}
-                    autoComplete="off"
+                    onChange={setTokenAddress}
                   />
                   {tokenAddress && !isValidTokenAddress && (
                     <p className="mt-3 text-xs text-danger font-medium uppercase tracking-wide">
