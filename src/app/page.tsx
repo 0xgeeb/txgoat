@@ -74,6 +74,7 @@ export default function Home() {
   };
 
   // TODO: Remove - mock data for testing UI
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleMockSearch = () => {
     setIsSearchMode(true);
     const mockTxs = [

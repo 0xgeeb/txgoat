@@ -141,6 +141,7 @@ export function useTimelineSelection(
         });
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [getTrackRect, state.isDragging, state.dragTarget, state.selection, updateSelection]
   );
 
@@ -239,6 +240,7 @@ export function useTimelineSelection(
         }
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [getTrackRect, state.isDragging, state.dragTarget, state.selection, updateSelection]
   );
 
@@ -381,6 +383,7 @@ export function useTimelineSelection(
       window.removeEventListener('mouseup', handleGlobalMouseUp);
       window.removeEventListener('mousemove', handleGlobalMouseMove);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.isDragging, state.dragTarget, state.selection, handleMouseUp, getTrackRect, updateSelection]);
 
   return {
